@@ -24,33 +24,13 @@ import java.util.Map;
  * Time: 23:35
  * To change this template use File | Settings | File Templates.
  */
-public class IaaSProfile {
-    private static String NS_URI = "http://profile/iaas";
-    private static String PROFILE_NAME = "IAAS_PROFILE";
-
-    private static String PRIMITIVE_TYPE_BOOLEAN = "Boolean";
-    private static String PRIMITIVE_TYPE_INTEGER = "Integer";
-    private static String PRIMITIVE_TYPE_REAL = "Real";
-    private static String PRIMITIVE_TYPE_STRING = "String";
-    private static String PRIMITIVE_TYPE_UMLIMITED_NATURAL = "UnlimitedNatural";
-
+public class UMLProfileBuilder {
     private com.eu.skyblue.iaasdocumenter.utils.Logger logger;
     private ResourceSet resourceSet;
     private Profile profile;
 
-    private PrimitiveType booleanPrimitiveType;
-    private PrimitiveType integerPrimitiveType;
-    private PrimitiveType realPrimitiveType;
-    private PrimitiveType stringPrimitiveType;
-    private PrimitiveType unlimitedPrimitiveType;
 
-    private org.eclipse.uml2.uml.Class propertyMetaclass;
-    private org.eclipse.uml2.uml.Class nodeMetaclass;
-    private org.eclipse.uml2.uml.Class artefactMetaclass;
-    private org.eclipse.uml2.uml.Class associationMetaclass;
-
-
-    protected IaaSProfile() {
+    protected UMLProfileBuilder(String nsUri, String profileName) {
         // Create a resource-set to contain the resource(s) that we load and save
         resourceSet = new ResourceSetImpl();
         Map<String, Object> extensionToFactoryMap = resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap();
@@ -63,48 +43,26 @@ public class IaaSProfile {
         // profiles, Ecore metadata, and other dependencies required for
         // serializing and working with UML resources.
         UMLResourcesUtil.init(resourceSet);
-
-        this.profile = UMLFactory.eINSTANCE.createProfile();
-        this.profile.setName(PROFILE_NAME);
-        this.profile.setURI(NS_URI);
-
-        this.importPrimitiveTypes();
-        this.importMetaclasses();
-    }
-
-    private void importPrimitiveTypes() {
-        this.booleanPrimitiveType = importPrimitiveType(this.profile, PRIMITIVE_TYPE_BOOLEAN);
-        this.integerPrimitiveType = importPrimitiveType(this.profile, PRIMITIVE_TYPE_INTEGER);
-        this.realPrimitiveType = importPrimitiveType(this.profile, PRIMITIVE_TYPE_REAL);
-        this.stringPrimitiveType = importPrimitiveType(this.profile, PRIMITIVE_TYPE_STRING);
-        this.unlimitedPrimitiveType = importPrimitiveType(this.profile, PRIMITIVE_TYPE_UMLIMITED_NATURAL);
     }
 
     // Import primitive types
-    private PrimitiveType importPrimitiveType(org.eclipse.uml2.uml.Package package_, String name) {
+    private PrimitiveType importPrimitiveType(String name) {
         org.eclipse.uml2.uml.Package umlLibrary =
             (org.eclipse.uml2.uml.Package)load(URI.createURI(XMI2UMLResource.UML_PRIMITIVE_TYPES_LIBRARY_2_4_1_URI));
         PrimitiveType primitiveType = (PrimitiveType) umlLibrary.getOwnedType(name);
-        package_.createElementImport(primitiveType);
+        this.profile.createElementImport(primitiveType);
 
         logger.out("Primitive type '%s' imported.", primitiveType.getQualifiedName());
 
         return primitiveType;
     }
 
-    private void importMetaclasses() {
-        this.propertyMetaclass = referenceMetaclass(this.profile, UMLPackage.Literals.PROPERTY.getName());
-        this.nodeMetaclass = referenceMetaclass(this.profile, UMLPackage.Literals.NODE.getName());
-        this.artefactMetaclass = referenceMetaclass(this.profile, UMLPackage.Literals.ARTIFACT.getName());
-        this.associationMetaclass = referenceMetaclass(this.profile, UMLPackage.Literals.ASSOCIATION.getName());
-    }
-
-    protected org.eclipse.uml2.uml.Class referenceMetaclass(Profile profile, String name) {
+    protected org.eclipse.uml2.uml.Class referenceMetaclass(String name) {
         org.eclipse.uml2.uml.Package _package = load(URI.createURI(UMLResource.UML_METAMODEL_URI));
         Model umlMetamodel = (Model) _package;
         _package.eResource().setURI(URI.createURI(XMI2UMLResource.UML_METAMODEL_2_4_1_URI));
         org.eclipse.uml2.uml.Class metaclass = (org.eclipse.uml2.uml.Class) umlMetamodel.getOwnedType(name);
-        profile.createMetaclassReference(metaclass);
+        this.profile.createMetaclassReference(metaclass);
 
         logger.out("Metaclass '%s' referenced.", metaclass.getQualifiedName());
 
@@ -112,8 +70,8 @@ public class IaaSProfile {
     }
 
     // Create stereotype
-    protected Stereotype createStereotype(Profile profile, String name, boolean isAbstract) {
-        Stereotype stereotype = profile.createOwnedStereotype(name, isAbstract);
+    protected Stereotype createStereotype(String name, boolean isAbstract) {
+        Stereotype stereotype = this.profile.createOwnedStereotype(name, isAbstract);
 
         logger.out("Stereotype '%s' created.", stereotype.getQualifiedName());
 
@@ -177,8 +135,8 @@ public class IaaSProfile {
     }
 
     // Define profile
-    protected void defineProfile(Profile profile) {
-        profile.define();
+    protected void defineProfile() {
+        this.profile.define();
 
         logger.out("Profile '%s' defined.", profile.getQualifiedName());
     }
