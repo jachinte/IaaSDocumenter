@@ -111,10 +111,6 @@ public class IaaSProfile {
         return metaclass;
     }
 
-
-
-
-
     // Create stereotype
     protected Stereotype createStereotype(Profile profile, String name, boolean isAbstract) {
         Stereotype stereotype = profile.createOwnedStereotype(name, isAbstract);
