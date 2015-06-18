@@ -1,5 +1,6 @@
-package com.eu.skyblue.iaasdocumenter.renderer.xmi;
+package com.eu.skyblue.iaasdocumenter.uml;
 
+import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -30,31 +31,39 @@ public class UMLProfileBuilder {
     private Profile profile;
 
 
-    protected UMLProfileBuilder(String nsUri, String profileName) {
+    protected UMLProfileBuilder(String nsUri, String profileName, Logger logger) {
         // Create a resource-set to contain the resource(s) that we load and save
         resourceSet = new ResourceSetImpl();
         Map<String, Object> extensionToFactoryMap = resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap();
         extensionToFactoryMap.put(XMI212UMLResource.PROFILE_FILE_EXTENSION, new UMLResourceFactoryImpl());
-
-        //resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(XMI212UMLResource.PROFILE_FILE_EXTENSION, new UMLResourceFactoryImpl());
         UMLPackage.eINSTANCE.setNsURI(XMI242UMLResource.UML_METAMODEL_2_4_1_NS_URI);
 
         // Initialize registrations of resource factories, library models,
         // profiles, Ecore metadata, and other dependencies required for
         // serializing and working with UML resources.
         UMLResourcesUtil.init(resourceSet);
+
+        this.profile = UMLFactory.eINSTANCE.createProfile();
+        this.profile.setName(profileName);
+        this.profile.setURI(nsUri);
+
+        this.logger = logger;
+    }
+
+    protected Profile getProfile() {
+        return this.profile;
     }
 
     // Import primitive types
-    private PrimitiveType importPrimitiveType(String name) {
+    protected PrimitiveType importPrimitiveType(String name) {
         org.eclipse.uml2.uml.Package umlLibrary =
             (org.eclipse.uml2.uml.Package)load(URI.createURI(XMI2UMLResource.UML_PRIMITIVE_TYPES_LIBRARY_2_4_1_URI));
-        PrimitiveType primitiveType = (PrimitiveType) umlLibrary.getOwnedType(name);
-        this.profile.createElementImport(primitiveType);
+        PrimitiveType PrimitiveType = (PrimitiveType) umlLibrary.getOwnedType(name);
+        this.profile.createElementImport(PrimitiveType);
 
-        logger.out("Primitive type '%s' imported.", primitiveType.getQualifiedName());
+        logger.out("PrimitiveType type '%s' imported.", PrimitiveType.getQualifiedName());
 
-        return primitiveType;
+        return PrimitiveType;
     }
 
     protected org.eclipse.uml2.uml.Class referenceMetaclass(String name) {
@@ -89,18 +98,22 @@ public class UMLProfileBuilder {
     }
 
     // Stereotype property (create)
-    protected Property createAttribute(org.eclipse.uml2.uml.Class class_, String name, Type type, int lowerBound, int upperBound, Object defaultValue) {
+    protected Property createAttribute(org.eclipse.uml2.uml.Class class_, String name, Type type,
+                                       int lowerBound, int upperBound, Object defaultValue) {
         Property attribute = class_.createOwnedAttribute(name, type, lowerBound, upperBound);
 
         if (defaultValue instanceof Boolean) {
-            LiteralBoolean literal = (LiteralBoolean) attribute.createDefaultValue(null, null, UMLPackage.Literals.LITERAL_BOOLEAN);
+            LiteralBoolean literal = (LiteralBoolean)attribute.createDefaultValue(null,
+                    null, UMLPackage.Literals.LITERAL_BOOLEAN);
             literal.setValue(((Boolean) defaultValue).booleanValue());
         } else if (defaultValue instanceof String) {
             if (type instanceof Enumeration) {
-                InstanceValue value = (InstanceValue) attribute.createDefaultValue(null, null, UMLPackage.Literals.INSTANCE_VALUE);
+                InstanceValue value = (InstanceValue) attribute.createDefaultValue(null,
+                        null, UMLPackage.Literals.INSTANCE_VALUE);
                 value.setInstance(((Enumeration) type).getOwnedLiteral((String) defaultValue));
             } else {
-                LiteralString literal = (LiteralString) attribute.createDefaultValue(null, null, UMLPackage.Literals.LITERAL_STRING);
+                LiteralString literal = (LiteralString) attribute.createDefaultValue(null,
+                        null, UMLPackage.Literals.LITERAL_STRING);
                 literal.setValue((String) defaultValue);
             }
         }
@@ -119,10 +132,9 @@ public class UMLProfileBuilder {
         return attribute;
     }
 
-
-
     // Create extension
-    protected Extension createExtension(org.eclipse.uml2.uml.Class metaclass, Stereotype stereotype, boolean required) {
+    protected Extension createExtension(org.eclipse.uml2.uml.Class metaclass, Stereotype stereotype,
+                                        boolean required) {
         Extension extension = stereotype.createExtension(metaclass, required);
 
         logger.out("%sxtension '%s' created.", //
@@ -206,18 +218,21 @@ public class UMLProfileBuilder {
     protected void applyStereotype(NamedElement namedElement, Stereotype stereotype) {
         namedElement.applyStereotype(stereotype);
 
-        logger.out("Stereotype '%s' applied to element '%s'.", stereotype.getQualifiedName(), namedElement.getQualifiedName());
+        logger.out("Stereotype '%s' applied to element '%s'.", stereotype.getQualifiedName(),
+                namedElement.getQualifiedName());
     }
 
     // Acess stereotype property values
     protected Object getStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype, Property property) {
         Object value = namedElement.getValue(stereotype, property.getName());
 
-        logger.out("Value of stereotype property '%s' on element '%s' is %s.", property.getQualifiedName(), namedElement.getQualifiedName(), value);
+        logger.out("Value of stereotype property '%s' on element '%s' is %s.", property.getQualifiedName(),
+                namedElement.getQualifiedName(), value);
 
         return value;
     }
-    protected void setStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype, Property property, Object value) {
+    protected void setStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype,
+                                              Property property, Object value) {
         Object valueToSet = value;
 
         if ((value instanceof String) && (property.getType() instanceof Enumeration)) {

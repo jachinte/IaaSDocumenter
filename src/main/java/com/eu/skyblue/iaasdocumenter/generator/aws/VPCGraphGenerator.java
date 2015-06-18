@@ -3,6 +3,7 @@ package com.eu.skyblue.iaasdocumenter.generator.aws;
 import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.services.elasticloadbalancing.model.LoadBalancerDescription;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.InfrastructureClient;
+import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import org.graphstream.algorithm.generator.BaseGenerator;
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
@@ -54,7 +55,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addRouter() {
         // Add implicit router to graph
-        addAWSNode(AttributeName.VPC_ROUTER, Stereotype.ROUTER);
+        addAWSNode(AttributeName.VPC_ROUTER, UMLStereotype.ROUTER);
 
         sendNodeAttributeAdded(sourceId, AttributeName.VPC_ROUTER, AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
     }
@@ -95,8 +96,8 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     }
 
     private void addNote() {
-        String nodeId = vpc.getVpcId() + AttributeName.TOKEN_SEPARATOR + Stereotype.NOTE;
-        addGraphNode(nodeId, Stereotype.NOTE);
+        String nodeId = vpc.getVpcId() + AttributeName.TOKEN_SEPARATOR + UMLStereotype.NOTE;
+        addGraphNode(nodeId, UMLStereotype.NOTE);
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.UI_LABEL, nodeId);
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.VPC, vpc.getVpcId());
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
@@ -107,7 +108,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (InternetGateway internetGateway : infrastructureClient.getInternetGateways(vpc)) {
             this.internetGateways.add(internetGateway);
 
-            addAWSNode(internetGateway.getInternetGatewayId(), Stereotype.INTERNET_GATEWAY);
+            addAWSNode(internetGateway.getInternetGatewayId(), UMLStereotype.INTERNET_GATEWAY);
 
             for (Tag tag : internetGateway.getTags()) {
                 if (tag.getKey().equalsIgnoreCase(AttributeName.NAME)) {
@@ -121,7 +122,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         // Populate graph with Network ACLs
         for (NetworkAcl networkAcl : infrastructureClient.getNetworkAcls(vpc)) {
             this.networkAcls.add(networkAcl);
-            addAWSNode(networkAcl.getNetworkAclId(), Stereotype.NETWORK_ACL);
+            addAWSNode(networkAcl.getNetworkAclId(), UMLStereotype.NETWORK_ACL);
         }
     }
 
@@ -129,7 +130,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         // Populate graph with Security Groups
         for (SecurityGroup securityGroup : infrastructureClient.getSecurityGroups(vpc)) {
             this.securityGroups.add(securityGroup);
-            addAWSNode(securityGroup.getGroupId(), Stereotype.SECURITY_GROUP);
+            addAWSNode(securityGroup.getGroupId(), UMLStereotype.SECURITY_GROUP);
         }
     }
 
@@ -139,7 +140,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
             for (Instance instance : reservation.getInstances()) {
                 this.instances.add(instance);
 
-                addAWSNode(instance.getInstanceId(), Stereotype.EC2_INSTANCE);
+                addAWSNode(instance.getInstanceId(), UMLStereotype.EC2_INSTANCE);
 
                 sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.NETWORK_INTERFACES, instance.getNetworkInterfaces());
                 sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.SECURITY_GROUPS, instance.getSecurityGroups());
@@ -153,7 +154,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (LoadBalancerDescription loadBalancerDescription : infrastructureClient.getElasticLoadBalancers(vpc)) {
             this.loadBalancerDescriptions.add(loadBalancerDescription);
 
-            addAWSNode(loadBalancerDescription.getLoadBalancerName(), Stereotype.ELASTIC_LB);
+            addAWSNode(loadBalancerDescription.getLoadBalancerName(), UMLStereotype.ELASTIC_LB);
             sendNodeAttributeAdded(sourceId, loadBalancerDescription.getLoadBalancerName(), AttributeName.DNS_NAME, loadBalancerDescription.getDNSName());
         }
     }
@@ -173,12 +174,12 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (NetworkInterface networkInterface : infrastructureClient.getNeworkInterfaces(vpc)) {
             this.networkInterfaces.add(networkInterface);
 
-            addAWSArtefact(networkInterface.getNetworkInterfaceId(), Stereotype.ENI);
+            addAWSArtefact(networkInterface.getNetworkInterfaceId(), UMLStereotype.ENI);
         }
     }
 
     private void addVpc() {
-        addAWSArtefact(vpc.getVpcId(), Stereotype.VPC);
+        addAWSArtefact(vpc.getVpcId(), UMLStereotype.VPC);
         sendNodeAttributeAdded(sourceId, vpc.getVpcId(), AttributeName.IS_DEFAULT, vpc.getIsDefault());
         sendNodeAttributeAdded(sourceId, vpc.getVpcId(), AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
     }
@@ -188,7 +189,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (Subnet subnet : infrastructureClient.getSubnets(vpc)) {
             this.subnets.add(subnet);
 
-            addAWSArtefact(subnet.getSubnetId(), Stereotype.SUBNET);
+            addAWSArtefact(subnet.getSubnetId(), UMLStereotype.SUBNET);
             sendNodeAttributeAdded(sourceId, subnet.getSubnetId(), AttributeName.IS_DEFAULT, subnet.isDefaultForAz());
             sendNodeAttributeAdded(sourceId, subnet.getSubnetId(), AttributeName.CIDR_BLOCK, subnet.getCidrBlock());
             sendNodeAttributeAdded(sourceId, subnet.getSubnetId(), AttributeName.AVAILABILITY_ZONE, subnet.getAvailabilityZone());
@@ -200,7 +201,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (RouteTable routeTable : infrastructureClient.getRouteTables(vpc)) {
             this.routeTables.add(routeTable);
 
-            addAWSArtefact(routeTable.getRouteTableId(), Stereotype.ROUTE_TABLE);
+            addAWSArtefact(routeTable.getRouteTableId(), UMLStereotype.ROUTE_TABLE);
         }
     }
 
@@ -261,7 +262,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                 for (String subnetId : loadBalancerDescription.getSubnets()) {
                     if (vpcContainsSubnet(subnetId)) {
                         addAWSAssociation(loadBalancerDescription.getLoadBalancerName() + AttributeName.TOKEN_SEPARATOR + subnetId,
-                                loadBalancerDescription.getLoadBalancerName(), subnetId, false, Stereotype.OSI_LAYER2_LINK);
+                                loadBalancerDescription.getLoadBalancerName(), subnetId, false, UMLStereotype.OSI_LAYER2_LINK);
                     }
                 }
             }
@@ -272,7 +273,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                         addAWSAssociation(loadBalancerDescription.getLoadBalancerName() + AttributeName.TOKEN_SEPARATOR
                                 + securityGroup,
                                 loadBalancerDescription.getLoadBalancerName(), securityGroup, false,
-                                Stereotype.PACKET_FILTERING);
+                                UMLStereotype.PACKET_FILTERING);
                     }
                 }
             }
@@ -287,13 +288,13 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                         AttributeName.TOKEN_SEPARATOR + networkInterface.getAttachment().getInstanceId();
 
                 addAWSAssociation(edgeId, networkInterface.getAttachment().getInstanceId(),
-                        networkInterface.getSubnetId(), false, Stereotype.OSI_LAYER2_LINK);
+                        networkInterface.getSubnetId(), false, UMLStereotype.OSI_LAYER2_LINK);
 
                 for (GroupIdentifier groupIdentifier : networkInterface.getGroups()) {
                     edgeId = networkInterface.getAttachment().getInstanceId() + AttributeName.TOKEN_SEPARATOR + groupIdentifier.getGroupId();
 
                     addAWSAssociation(edgeId, groupIdentifier.getGroupId(),
-                            networkInterface.getAttachment().getInstanceId(), false, Stereotype.PACKET_FILTERING);
+                            networkInterface.getAttachment().getInstanceId(), false, UMLStereotype.PACKET_FILTERING);
                 }
             }
             // delete NIC (connection between EC2 instance and subnet has been established).
@@ -306,7 +307,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (NetworkAcl networkAcl : this.networkAcls) {
             String edgeId = networkAcl.getNetworkAclId() + AttributeName.TOKEN_SEPARATOR + AttributeName.VPC_ROUTER;
 
-            addAWSAssociation(edgeId, networkAcl.getNetworkAclId(), AttributeName.VPC_ROUTER, false, Stereotype.OSI_LAYER2_LINK);
+            addAWSAssociation(edgeId, networkAcl.getNetworkAclId(), AttributeName.VPC_ROUTER, false, UMLStereotype.OSI_LAYER2_LINK);
 
             for (NetworkAclAssociation networkAclAssociation : networkAcl.getAssociations()) {
                 if (isLinkedSubnetToRouter(networkAclAssociation.getSubnetId())) {
@@ -315,7 +316,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                     edgeId = networkAcl.getNetworkAclId() + AttributeName.TOKEN_SEPARATOR + networkAclAssociation.getSubnetId();
 
                     addAWSAssociation(edgeId, networkAcl.getNetworkAclId(), networkAclAssociation.getSubnetId(),
-                            false, Stereotype.OSI_LAYER2_LINK);
+                            false, UMLStereotype.OSI_LAYER2_LINK);
                 }
             }
         }
@@ -324,7 +325,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void createLinksRoutingTableToImplicitRouter() {
         for (RouteTable routeTable : this.routeTables) {
             String edgeId = routeTable.getRouteTableId() + AttributeName.TOKEN_SEPARATOR + AttributeName.VPC_ROUTER;
-            addAWSAssociation(edgeId,routeTable.getRouteTableId(), AttributeName.VPC_ROUTER, true, Stereotype.DEPENDENCY);
+            addAWSAssociation(edgeId,routeTable.getRouteTableId(), AttributeName.VPC_ROUTER, true, UMLStereotype.DEPENDENCY);
 
             // Create routing table associations that were configured explicitly
             for(RouteTableAssociation routeTableAssociation : routeTable.getAssociations()) {
@@ -332,7 +333,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                     // Link router to subnet
                     edgeId = AttributeName.VPC_ROUTER + AttributeName.TOKEN_SEPARATOR + routeTableAssociation.getSubnetId();
                     addAWSAssociation(edgeId, AttributeName.VPC_ROUTER, routeTableAssociation.getSubnetId(), false,
-                            Stereotype.OSI_LAYER2_LINK);
+                            UMLStereotype.OSI_LAYER2_LINK);
                 }
             }
 
@@ -343,7 +344,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                         // Link router to subnet
                         edgeId = AttributeName.VPC_ROUTER + AttributeName.TOKEN_SEPARATOR + subnet.getSubnetId();
                         addAWSAssociation(edgeId, AttributeName.VPC_ROUTER, subnet.getSubnetId(), false,
-                                Stereotype.OSI_LAYER2_LINK);
+                                UMLStereotype.OSI_LAYER2_LINK);
                     }
                 }
             }
@@ -353,7 +354,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void createLinkInternetGatewayToImplictRouter() {
         for (InternetGateway internetGateway : this.internetGateways) {
             String edgeId = internetGateway.getInternetGatewayId() + AttributeName.TOKEN_SEPARATOR + AttributeName.VPC_ROUTER;
-            addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), AttributeName.VPC_ROUTER, false, Stereotype.OSI_LAYER2_LINK);
+            addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), AttributeName.VPC_ROUTER, false, UMLStereotype.OSI_LAYER2_LINK);
         }
     }
 
@@ -361,11 +362,11 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         if (this.internetGateways.size() > 0) {
             for (InternetGateway internetGateway : this.internetGateways) {
                 String edgeId = internetGateway.getInternetGatewayId() + AttributeName.TOKEN_SEPARATOR + vpc.getVpcId();
-                addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), vpc.getVpcId(), false, Stereotype.OSI_LAYER2_LINK);
+                addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), vpc.getVpcId(), false, UMLStereotype.OSI_LAYER2_LINK);
             }
         } else {
             String edgeId = AttributeName.VPC_ROUTER + AttributeName.TOKEN_SEPARATOR + vpc.getVpcId();
-            addAWSAssociation(edgeId, AttributeName.VPC_ROUTER, vpc.getVpcId(), false, Stereotype.OSI_LAYER2_LINK);
+            addAWSAssociation(edgeId, AttributeName.VPC_ROUTER, vpc.getVpcId(), false, UMLStereotype.OSI_LAYER2_LINK);
         }
     }
 }

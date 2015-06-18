@@ -3,6 +3,8 @@ package com.eu.skyblue.iaasdocumenter;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
+import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
+import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.ui.layout.HierarchicalLayout;
@@ -23,27 +25,31 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("*** IaaSDocumenter! ***");
 
-        try {
-            iaasDocumenter = DocumenterFactory.createIaasDocumenter(Regions.US_WEST_2);
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
+        // AWS polling
+//        try {
+//            iaasDocumenter = DocumenterFactory.createIaasDocumenter(Regions.US_WEST_2);
+//        } catch (Exception e) {
+//            System.out.println("Error: " + e);
+//        }
+//
+//        iaasDocumenter.createInventory();
+//
+//        // Debug stuff - should be moved into a renderer
+//        List<Graph> g = iaasDocumenter.getGraphs();
+//        for (Graph graph : iaasDocumenter.getGraphs()) {
+//            Viewer v = graph.display(false);
+//            HierarchicalLayout hl = new HierarchicalLayout();
+//            v.enableAutoLayout(hl);
+//
+//            Iterator<Node> nodeIterator = graph.iterator();
+//            while (nodeIterator.hasNext()) {
+//                System.out.println(nodeIterator.next().getId());
+//            }
+//            System.out.println("--------------------------------------------");
+//        }
 
-        iaasDocumenter.createInventory();
-
-        // Debug stuff - should be moved into a renderer
-        List<Graph> g = iaasDocumenter.getGraphs();
-        for (Graph graph : iaasDocumenter.getGraphs()) {
-            Viewer v = graph.display(false);
-            HierarchicalLayout hl = new HierarchicalLayout();
-            v.enableAutoLayout(hl);
-
-            Iterator<Node> nodeIterator = graph.iterator();
-            while (nodeIterator.hasNext()) {
-                System.out.println(nodeIterator.next().getId());
-            }
-            System.out.println("--------------------------------------------");
-        }
-
+        // uml profile stuff
+        Logger logger = new Logger(Boolean.TRUE);
+        IaaSProfile iaaSProfile = new IaaSProfile(logger);
     }
 }

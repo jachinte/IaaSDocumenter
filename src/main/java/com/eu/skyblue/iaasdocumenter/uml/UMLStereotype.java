@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.generator.aws;
+package com.eu.skyblue.iaasdocumenter.uml;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,7 @@ package com.eu.skyblue.iaasdocumenter.generator.aws;
  * Time: 09:50
  * To change this template use File | Settings | File Templates.
  */
-public class Stereotype {
+public class UMLStereotype {
     public static final String INTERNET_GATEWAY = "InternetGateway";
     public static final String ROUTER = "Router";
     public static final String ELASTIC_LB = "ElasticLB";
