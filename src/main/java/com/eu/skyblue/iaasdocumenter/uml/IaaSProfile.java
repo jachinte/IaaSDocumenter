@@ -2,6 +2,7 @@ package com.eu.skyblue.iaasdocumenter.uml;
 
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.eclipse.uml2.uml.PrimitiveType;
+import org.eclipse.uml2.uml.Stereotype;
 import org.eclipse.uml2.uml.UMLPackage;
 
 /**
@@ -14,6 +15,8 @@ import org.eclipse.uml2.uml.UMLPackage;
 public class IaaSProfile {
     private static String NS_URI = "http://profile/iaas";
     private static String PROFILE_NAME = "IAAS_PROFILE";
+
+    private Stereotype routerStereotype;
 
     private UMLProfileBuilder umlProfileBuilder;
     private Logger logger;
@@ -53,5 +56,10 @@ public class IaaSProfile {
         this.nodeMetaclass = umlProfileBuilder.referenceMetaclass(UMLPackage.Literals.NODE.getName());
         this.artefactMetaclass = umlProfileBuilder.referenceMetaclass(UMLPackage.Literals.ARTIFACT.getName());
         this.associationMetaclass = umlProfileBuilder.referenceMetaclass(UMLPackage.Literals.ASSOCIATION.getName());
+    }
+
+    private void createStereotypeRouter() {
+        this.routerStereotype = umlProfileBuilder.createStereotype(UMLStereotype.ROUTER, Boolean.FALSE);
+        umlProfileBuilder.createExtension(this.nodeMetaclass, this.routerStereotype, Boolean.FALSE);
     }
 }
