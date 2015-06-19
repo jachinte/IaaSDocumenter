@@ -8,6 +8,8 @@ package com.eu.skyblue.iaasdocumenter.uml;
  * To change this template use File | Settings | File Templates.
  */
 public class UMLStereotype {
+    public static final String AWS_NODE = "AWSNode";
+    public static final String FIREWALL = "Firewall";
     public static final String INTERNET_GATEWAY = "InternetGateway";
     public static final String ROUTER = "Router";
     public static final String ELASTIC_LB = "ElasticLB";

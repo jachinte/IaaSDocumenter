@@ -198,7 +198,7 @@ public class UMLProfileBuilder {
 
             // Get the first (should be only) package from it
             package_ = (org.eclipse.uml2.uml.Package) EcoreUtil.getObjectByType(resource.getContents(), UMLPackage.Literals.PACKAGE);
-            System.out.println(">>>> UMLPackage.Literals.PACKAGE:" + UMLPackage.Literals.PACKAGE);
+            //System.out.println(">>>> UMLPackage.Literals.PACKAGE: " + UMLPackage.Literals.PACKAGE);
         } catch (WrappedException we) {
             logger.err(we.getMessage());
             System.exit(1);
@@ -208,8 +208,8 @@ public class UMLProfileBuilder {
     }
 
     // Apply profile
-    protected void applyProfile(org.eclipse.uml2.uml.Package package_, Profile profile) {
-        package_.applyProfile(profile);
+    protected void applyProfile(org.eclipse.uml2.uml.Package package_) {
+        package_.applyProfile(this.profile);
 
         logger.out("Profile '%s' applied to package '%s'.", profile.getQualifiedName(), package_.getQualifiedName());
     }
