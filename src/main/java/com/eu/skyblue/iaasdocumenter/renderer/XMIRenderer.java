@@ -95,6 +95,8 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
 
                 ((Association) packageableElement).createOwnedEnd(edge.getNode1().getId(),
                         (Type) this.vpcArtefacts.get(edge.getNode0().getId()));
+
+                applyStereotype(packageableElement, (String)edge.getAttribute(AttributeName.STEREOTYPE));
             }
         }
     }
@@ -125,6 +127,8 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
             umlStereotype = iaaSProfile.getPacketFilteringStereotype();
         } else if (stereotype.equalsIgnoreCase(UMLStereotype.VPC)) {
             umlStereotype = iaaSProfile.getVirtualPrivateCloudStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.OSI_LAYER2_LINK)) {
+            umlStereotype = iaaSProfile.getOsiLayer2LinkStereotype();
         }
         return umlStereotype;
     }
