@@ -22,4 +22,5 @@ public class AttributeName {
     public static final String STEREOTYPE = "umlStereotype";
     public static final String NOTE = "Note";
     public static final String VPC = "vpc";
+    public static final String METACLASS = "umlMetaClass";
 }

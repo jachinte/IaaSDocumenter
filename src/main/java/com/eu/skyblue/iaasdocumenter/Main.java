@@ -3,6 +3,7 @@ package com.eu.skyblue.iaasdocumenter;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
+import com.eu.skyblue.iaasdocumenter.renderer.XMIRenderer;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.graph.Graph;
@@ -25,31 +26,44 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("*** IaaSDocumenter! ***");
 
-        // AWS polling
-//        try {
-//            iaasDocumenter = DocumenterFactory.createIaasDocumenter(Regions.US_WEST_2);
-//        } catch (Exception e) {
-//            System.out.println("Error: " + e);
-//        }
-//
-//        iaasDocumenter.createInventory();
-//
-//        // Debug stuff - should be moved into a renderer
-//        List<Graph> g = iaasDocumenter.getGraphs();
-//        for (Graph graph : iaasDocumenter.getGraphs()) {
-//            Viewer v = graph.display(false);
-//            HierarchicalLayout hl = new HierarchicalLayout();
-//            v.enableAutoLayout(hl);
-//
-//            Iterator<Node> nodeIterator = graph.iterator();
-//            while (nodeIterator.hasNext()) {
-//                System.out.println(nodeIterator.next().getId());
-//            }
-//            System.out.println("--------------------------------------------");
-//        }
-
-        // uml profile stuff
         Logger logger = new Logger(Boolean.TRUE);
         IaaSProfile iaaSProfile = new IaaSProfile(logger);
+
+        // AWS polling
+        try {
+            iaasDocumenter = DocumenterFactory.createIaasDocumenter(Regions.US_WEST_2);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+
+        iaasDocumenter.createInventory();
+
+        // Debug stuff - should be moved into a renderer
+        // vpc-8762c3e2 (large), vpc-9371f0f6 (small), vpc-190cb27c (medium)
+        String testGraph = "vpc-190cb27c";
+        List<Graph> g = iaasDocumenter.getGraphs();
+        for (Graph graph : iaasDocumenter.getGraphs()) {
+            if (graph.getId().equalsIgnoreCase(testGraph)) {
+                System.out.println(">>>>>>>> " + graph.getId());
+                //Viewer v = graph.display(false);
+                //HierarchicalLayout hl = new HierarchicalLayout();
+                //v.enableAutoLayout(hl);
+
+                XMIRenderer xmiRenderer = new XMIRenderer(iaaSProfile, logger);
+                xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
+                //xmiRenderer.compute();
+
+                //Iterator<Node> nodeIterator = graph.iterator();
+                //while (nodeIterator.hasNext()) {
+                //    System.out.println(nodeIterator.next().getId());
+                //}
+            }
+            System.out.println("--------------------------------------------");
+        }
+
+
+
+
+        //XMIRenderer xmiRenderer = new XMIRenderer(iaaSProfile);
     }
 }

@@ -290,4 +290,8 @@ public class IaaSProfile {
     public Stereotype getOsiLayer2LinkStereotype() {
         return osiLayer2LinkStereotype;
     }
+
+    public Profile getProfile() {
+        return umlProfileBuilder.getProfile();
+    }
 }

@@ -198,7 +198,6 @@ public class UMLProfileBuilder {
 
             // Get the first (should be only) package from it
             package_ = (org.eclipse.uml2.uml.Package) EcoreUtil.getObjectByType(resource.getContents(), UMLPackage.Literals.PACKAGE);
-            //System.out.println(">>>> UMLPackage.Literals.PACKAGE: " + UMLPackage.Literals.PACKAGE);
         } catch (WrappedException we) {
             logger.err(we.getMessage());
             System.exit(1);

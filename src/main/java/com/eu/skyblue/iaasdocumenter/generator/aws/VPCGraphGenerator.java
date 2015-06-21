@@ -48,7 +48,6 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     }
 
     public void begin() {
-        addNote();
         addVpc();
         addRouter();
     }
@@ -56,7 +55,6 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void addRouter() {
         // Add implicit router to graph
         addAWSNode(AttributeName.VPC_ROUTER, UMLStereotype.ROUTER);
-
         sendNodeAttributeAdded(sourceId, AttributeName.VPC_ROUTER, AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
     }
 
@@ -87,6 +85,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addAWSNode(String nodeId, String stereotype) {
         addGraphNode(nodeId, stereotype);
+        sendNodeAttributeAdded(sourceId, nodeId, AttributeName.METACLASS, MetaClass.NODE);
     }
 
     private void addGraphNode(String nodeId, String stereotype) {
@@ -98,6 +97,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void addNote() {
         String nodeId = vpc.getVpcId() + AttributeName.TOKEN_SEPARATOR + UMLStereotype.NOTE;
         addGraphNode(nodeId, UMLStereotype.NOTE);
+        sendNodeAttributeAdded(sourceId, nodeId, AttributeName.METACLASS, MetaClass.NOTE);
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.UI_LABEL, nodeId);
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.VPC, vpc.getVpcId());
         sendNodeAttributeAdded(sourceId, nodeId, AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
@@ -167,6 +167,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addAWSArtefact(String nodeId, String stereotype) {
         addGraphNode(nodeId, stereotype);
+        sendNodeAttributeAdded(sourceId, nodeId, AttributeName.METACLASS, MetaClass.ARTEFACT);
     }
 
     private void addNetworkInterfaces() {
@@ -180,6 +181,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addVpc() {
         addAWSArtefact(vpc.getVpcId(), UMLStereotype.VPC);
+        sendNodeAttributeAdded(sourceId, vpc.getVpcId(), AttributeName.METACLASS, MetaClass.ARTEFACT);
         sendNodeAttributeAdded(sourceId, vpc.getVpcId(), AttributeName.IS_DEFAULT, vpc.getIsDefault());
         sendNodeAttributeAdded(sourceId, vpc.getVpcId(), AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
     }
@@ -247,11 +249,12 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void addAWSAssociation(String edgeId, String fromNodeId, String toNodeId, boolean directed,
                                    String stereotype) {
         addGraphEdge(edgeId, fromNodeId, toNodeId, directed, stereotype);
+        sendEdgeAttributeAdded(sourceId, edgeId, AttributeName.METACLASS, MetaClass.ASSOCIATION);
     }
 
     private void addGraphEdge(String edgeId, String fromNodeId, String toNodeId, boolean directed, String stereotype) {
         sendEdgeAdded(sourceId, edgeId,fromNodeId, toNodeId, directed);
-        sendEdgeAttributeAdded(sourceId, edgeId, AttributeName.UI_LABEL, "<<" + stereotype + ">>");
+        sendEdgeAttributeAdded(sourceId, edgeId, AttributeName.UI_LABEL, "«" + stereotype + "»");
         sendEdgeAttributeAdded(sourceId, edgeId, AttributeName.STEREOTYPE, stereotype);
     }
 
