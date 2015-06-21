@@ -3,6 +3,7 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.generator.aws.MetaClass;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
+import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -41,6 +42,9 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
     private ResourceSet resourceSet;
     private org.eclipse.uml2.uml.Package deploymentView;
 
+    private URI uri;
+    private Resource resource;
+
     public XMIRenderer(IaaSProfile iaaSProfile, Logger logger) {
         this.iaaSProfile = iaaSProfile;
         this.logger = logger;
@@ -77,19 +81,52 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
             logger.out("[e] %s: '%s' «%s».", edge.getAttribute(AttributeName.METACLASS), edge.getId(),
                     edge.getAttribute(AttributeName.STEREOTYPE));
 
+            if (((String)edge.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
+                PackageableElement packageableElement =
+                        deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getDeployment());
+                vpcArtefacts.put(edge.getId(), packageableElement);
+            } else {
+                PackageableElement packageableElement =
+                        deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getAssociation());
+                vpcArtefacts.put(edge.getId(), packageableElement);
 
-            PackageableElement packageableElement =
-                    deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getAssociation());
-            vpcArtefacts.put(edge.getId(), packageableElement);
+                ((Association) packageableElement).createOwnedEnd(edge.getNode0().getId(),
+                        (Type) this.vpcArtefacts.get(edge.getNode1().getId()));
 
-            ((Association)packageableElement).createOwnedEnd(edge.getNode0().getId(),
-                    (Type)this.vpcArtefacts.get(edge.getNode1().getId()));
-
-            ((Association)packageableElement).createOwnedEnd(edge.getNode1().getId(),
-                    (Type)this.vpcArtefacts.get(edge.getNode0().getId()));
-
-            // Create stereotype
+                ((Association) packageableElement).createOwnedEnd(edge.getNode1().getId(),
+                        (Type) this.vpcArtefacts.get(edge.getNode0().getId()));
+            }
         }
+    }
+
+    private void applyStereotype(PackageableElement packageableElement, String stereotypeAttribute) {
+        iaaSProfile.applyStereotype(packageableElement, getStereotype(stereotypeAttribute));
+    }
+
+    private Stereotype getStereotype(String stereotype) {
+        Stereotype umlStereotype = null;
+        if (stereotype.equalsIgnoreCase(UMLStereotype.EC2_INSTANCE)) {
+            umlStereotype = iaaSProfile.getEc2InstanceStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.INTERNET_GATEWAY)) {
+            umlStereotype = iaaSProfile.getInternetGatewayStereotype();
+        } if (stereotype.equalsIgnoreCase(UMLStereotype.ROUTER)) {
+            umlStereotype = iaaSProfile.getRouterStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.ELASTIC_LB)) {
+            umlStereotype = iaaSProfile.getElasticLBStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.SECURITY_GROUP)) {
+            umlStereotype = iaaSProfile.getSecurityGroupStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.NETWORK_ACL)) {
+            umlStereotype = iaaSProfile.getNetworkAclStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.SUBNET)) {
+            umlStereotype = iaaSProfile.getSubnetStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.ROUTE_TABLE)) {
+            umlStereotype = iaaSProfile.getRouteTableStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.PACKET_FILTERING)) {
+            umlStereotype = iaaSProfile.getPacketFilteringStereotype();
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.VPC)) {
+            umlStereotype = iaaSProfile.getVirtualPrivateCloudStereotype();
+        }
+        return umlStereotype;
     }
 
     private void processNodes() {
@@ -100,12 +137,11 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
                 PackageableElement packageableElement =
                         deploymentView.createPackagedElement(node.getId(), getEClass(node));
                 vpcArtefacts.put(node.getId(), packageableElement);
+                applyStereotype(packageableElement, (String)node.getAttribute(AttributeName.STEREOTYPE));
             } catch (Exception e) {
                 logger.err("Error while adding %s %s: '%s'", node.getAttribute(AttributeName.METACLASS),
                         node.getId(), e.getMessage());
             }
-
-            // Add stereotype here
         }
     }
 
@@ -131,15 +167,19 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
     @Override
     public void render(Graph graph, String filePath) {
         this.init(graph);
+
+        // Required here instead of within the save method due to undocumented behaviour with Eclipse UML2
+        uri = URI.createFileURI(filePath).appendFileExtension(XMI212UMLResource.FILE_EXTENSION);
+        resource = resourceSet.createResource(uri);
+        resource.getContents().add(this.model);
+        resource.getContents().add(iaaSProfile.getProfile());
+
         this.compute();
-        this.save(filePath);
+        this.save();
     }
 
-    private void save(String filePath) {
-        URI uri = URI.createFileURI(filePath).appendFileExtension(XMI212UMLResource.FILE_EXTENSION);
-        Resource resource = resourceSet.createResource(uri);
-        resource.getContents().add(iaaSProfile.getProfile());
-        resource.getContents().add(this.model);
+    //private void save(String filePath) {
+    private void save() {
 
         try {
             ((XMIResourceImpl)resource).setXMIVersion(UML212UMLResource.VERSION_2_1_VALUE);
