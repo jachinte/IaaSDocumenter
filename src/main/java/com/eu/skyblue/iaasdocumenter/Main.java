@@ -3,6 +3,8 @@ package com.eu.skyblue.iaasdocumenter;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
+import com.eu.skyblue.iaasdocumenter.renderer.GraphRenderer;
+import com.eu.skyblue.iaasdocumenter.renderer.GraphicalRenderer;
 import com.eu.skyblue.iaasdocumenter.renderer.XMIRenderer;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
@@ -49,9 +51,12 @@ public class Main {
                 //HierarchicalLayout hl = new HierarchicalLayout();
                 //v.enableAutoLayout(hl);
 
-                XMIRenderer xmiRenderer = new XMIRenderer(iaaSProfile, logger);
-                xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
-                //xmiRenderer.compute();
+                //GraphRenderer xmiRenderer = new XMIRenderer(iaaSProfile, logger);
+                //xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
+
+                //GraphicalRenderer
+                GraphRenderer graphicalRenderer = new GraphicalRenderer(logger);
+                graphicalRenderer.render(graph, "/Users/raye/tmp/" + graph.getId() + ".svg");
 
                 //Iterator<Node> nodeIterator = graph.iterator();
                 //while (nodeIterator.hasNext()) {
