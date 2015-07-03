@@ -328,7 +328,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private void createLinksRoutingTableToImplicitRouter() {
         for (RouteTable routeTable : this.routeTables) {
             String edgeId = routeTable.getRouteTableId() + AttributeName.TOKEN_SEPARATOR + AttributeName.VPC_ROUTER;
-            addAWSAssociation(edgeId,routeTable.getRouteTableId(), AttributeName.VPC_ROUTER, true, UMLStereotype.DEPLOYMENT);
+            addAWSAssociation(edgeId,routeTable.getRouteTableId(), AttributeName.VPC_ROUTER, false, UMLStereotype.DEPLOYMENT);
 
             // Create routing table associations that were configured explicitly
             for(RouteTableAssociation routeTableAssociation : routeTable.getAssociations()) {

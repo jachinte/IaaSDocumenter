@@ -3,17 +3,11 @@ package com.eu.skyblue.iaasdocumenter;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
-import com.eu.skyblue.iaasdocumenter.renderer.GraphRenderer;
-import com.eu.skyblue.iaasdocumenter.renderer.GraphicalRenderer;
-import com.eu.skyblue.iaasdocumenter.renderer.XMIRenderer;
+import com.eu.skyblue.iaasdocumenter.renderer.algo.OrthogonalLayoutAlgorithm1;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.ui.layout.HierarchicalLayout;
-import org.graphstream.ui.view.Viewer;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,8 +49,12 @@ public class Main {
                 //xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
 
                 //GraphicalRenderer
-                GraphRenderer graphicalRenderer = new GraphicalRenderer(logger);
-                graphicalRenderer.render(graph, "/Users/raye/tmp/" + graph.getId() + ".svg");
+                //GraphRenderer graphicalRenderer = new GraphicalRenderer(logger);
+                //graphicalRenderer.render(graph, "/Users/raye/tmp/" + graph.getId() + ".svg");
+
+                OrthogonalLayoutAlgorithm1 orthogonalLayoutAlgorithm1 = new OrthogonalLayoutAlgorithm1(logger);
+                orthogonalLayoutAlgorithm1.init(graph);
+                orthogonalLayoutAlgorithm1.compute();
 
                 //Iterator<Node> nodeIterator = graph.iterator();
                 //while (nodeIterator.hasNext()) {

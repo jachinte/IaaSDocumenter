@@ -111,7 +111,7 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
             umlStereotype = iaaSProfile.getEc2InstanceStereotype();
         } else if (stereotype.equalsIgnoreCase(UMLStereotype.INTERNET_GATEWAY)) {
             umlStereotype = iaaSProfile.getInternetGatewayStereotype();
-        } if (stereotype.equalsIgnoreCase(UMLStereotype.ROUTER)) {
+        } else if (stereotype.equalsIgnoreCase(UMLStereotype.ROUTER)) {
             umlStereotype = iaaSProfile.getRouterStereotype();
         } else if (stereotype.equalsIgnoreCase(UMLStereotype.ELASTIC_LB)) {
             umlStereotype = iaaSProfile.getElasticLBStereotype();

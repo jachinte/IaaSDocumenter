@@ -141,6 +141,7 @@ public class GraphicalRenderer implements Algorithm, GraphRenderer{
 
         logger.out("Diagram Height: %s", getDiagramHeight());
         logger.out("Diagram Width: %s", getDiagramWidth());
+        dfsTraverse();
     }
 
     private int getDiagramHeight() {
@@ -186,6 +187,18 @@ public class GraphicalRenderer implements Algorithm, GraphRenderer{
             } catch (IOException e) {
                 logger.err("IOException: (2) %s", e.getMessage());
             }
+        }
+    }
+
+    private void dfsTraverse() {
+        int i = 0;
+        //Node rootNode = vpcGraph.getNode(vpcGraph.getId());
+        //logger.out("Index: %s, Node: %s", i, rootNode.getId());
+        Iterator<Node> iterator = vpcGraph.getNode(vpcGraph.getId()).getDepthFirstIterator();
+        while (iterator.hasNext()) {
+            Node currentNode = iterator.next();
+            logger.out("Index: %s, Node: %s", i, currentNode.getId());
+            i++;
         }
     }
 }
