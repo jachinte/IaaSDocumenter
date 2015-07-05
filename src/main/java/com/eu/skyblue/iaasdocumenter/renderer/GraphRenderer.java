@@ -10,5 +10,5 @@ import org.graphstream.graph.Graph;
  * To change this template use File | Settings | File Templates.
  */
 public interface GraphRenderer {
-    public void render(Graph graph, String folderPath);
+    public void render(Graph graph, String filePath);
 }

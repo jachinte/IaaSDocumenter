@@ -1,6 +1,7 @@
 package com.eu.skyblue.iaasdocumenter.renderer.algo;
 
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
+import com.eu.skyblue.iaasdocumenter.renderer.UMLDeploymentDiagram;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import com.eu.skyblue.iaasdocumenter.utils.Location;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
@@ -19,7 +20,7 @@ import java.util.Set;
  * Time: 20:27
  * To change this template use File | Settings | File Templates.
  */
-public class OrthogonalLayoutAlgorithm1 implements Algorithm {
+public class OrthogonalLayoutAlgorithm implements Algorithm {
     private static int ROW_VPC = 1;
     private static int ROW_IGW = 2;
     private static int ROW_ROUTE_TABLE = 3;
@@ -37,10 +38,18 @@ public class OrthogonalLayoutAlgorithm1 implements Algorithm {
     private Logger logger;
 
     private Set<Location> locations;
+    private int maxCol;
+    private int diagramWidth;
+    private int diagramHeight;
+    private int lastRow;
 
-    public OrthogonalLayoutAlgorithm1(Logger logger) {
+    public OrthogonalLayoutAlgorithm(Logger logger) {
         this.logger = logger;
         this.locations =  new HashSet<Location>();
+        this.maxCol = 0;
+        this.diagramHeight = 0;
+        this.diagramWidth = 0;
+        this.lastRow = ROW_SECURITY_GROUP;
     }
 
     @Override
@@ -51,6 +60,18 @@ public class OrthogonalLayoutAlgorithm1 implements Algorithm {
     @Override
     public void compute() {
         dfsTraverse();
+        calculateDiagramHeight();
+        calculateDiagramWidth();
+
+        logger.out("Height: %s, Width: %s", getDiagramHeght(), getDiagramWidth());
+    }
+
+    public int getDiagramHeght() {
+        return this.diagramHeight;
+    }
+
+    public int getDiagramWidth() {
+        return this.diagramWidth;
     }
 
     private int getRow(Node node) {
@@ -177,6 +198,9 @@ public class OrthogonalLayoutAlgorithm1 implements Algorithm {
         } else if (nextColumn(previousNode, currentNode)) {
             //column = Integer.parseInt((String)previousNode.getAttribute(D_COL)) + 1;
             column = (Integer)previousNode.getAttribute(D_COL) + 1;
+        } else {
+            // default if we don't know, so attempt to place it under the previous node
+            column = (Integer)previousNode.getAttribute(D_COL);
         }
 
         return column;
@@ -198,17 +222,47 @@ public class OrthogonalLayoutAlgorithm1 implements Algorithm {
         while (iterator.hasNext()) {
             Node currentNode = iterator.next();
 
-            currentNode.setAttribute(D_ROW, getRow(currentNode));
+            int row = getRow(currentNode);
+            currentNode.setAttribute(D_ROW, row);
+            currentNode.setAttribute(UMLDeploymentDiagram.Y_COORDINATE, getYCoordinate(row));
+
+
             int column = rightShift(getRow(currentNode), getCol(previousNode, currentNode));
             currentNode.setAttribute(D_COL, column);
+            currentNode.setAttribute(UMLDeploymentDiagram.X_COORDINATE, getXCoordinate(column));
+
             locations.add(new Location(getRow(currentNode), column));
 
-            logger.out("Index: %s, Previous Node: %s, Current Node: %s, Row: %s, Column: %s",
-                    i, previousNodeId, currentNode.getId(), getRow(currentNode), column);
+            logger.out("Index: %s, Previous Node: %s, Current Node: %s, Row: %s (%s), Column: %s (%s)",
+                    i, previousNodeId, currentNode.getId(), getRow(currentNode), getYCoordinate(row),
+                    column, getXCoordinate(column));
 
             i++;
             previousNode = currentNode;
             previousNodeId = currentNode.getId();
+            this.maxCol = Math.max(this.maxCol, column);
         }
+    }
+
+    private int getYCoordinate(int row) {
+        return ((row - 1) * UMLDeploymentDiagram.ROW_GAP_PIXELS) +
+                ((row - 1) * UMLDeploymentDiagram.ARTEFACT_HEIGHT_PIXELS) +
+                UMLDeploymentDiagram.VERTICAL_OFFSET;
+    }
+
+    private int getXCoordinate(int col) {
+        return ((col - 1) * UMLDeploymentDiagram.COLUMN_GAP_PIXELS) +
+                ((col - 1) * UMLDeploymentDiagram.ARTEFACT_WIDTH_PIXELS) +
+                UMLDeploymentDiagram.HORIZONTAL_OFFSET;
+    }
+
+    private void calculateDiagramHeight() {
+        this.diagramHeight =  (this.lastRow * UMLDeploymentDiagram.ROW_GAP_PIXELS) +
+                ((this.lastRow) * UMLDeploymentDiagram.ARTEFACT_HEIGHT_PIXELS);
+    }
+
+    private void calculateDiagramWidth() {
+        this.diagramWidth = (this.maxCol * UMLDeploymentDiagram.COLUMN_GAP_PIXELS) +
+                ((this.maxCol) * UMLDeploymentDiagram.ARTEFACT_WIDTH_PIXELS);
     }
 }
