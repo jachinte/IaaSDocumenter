@@ -3,7 +3,7 @@ package com.eu.skyblue.iaasdocumenter.renderer.algo;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.renderer.UMLDeploymentDiagram;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
-import com.eu.skyblue.iaasdocumenter.utils.Location;
+import com.eu.skyblue.iaasdocumenter.utils.Coordinate;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.algorithm.Algorithm;
 import org.graphstream.graph.Graph;
@@ -37,7 +37,7 @@ public class OrthogonalLayoutAlgorithm implements Algorithm {
     private Graph vpcGraph;
     private Logger logger;
 
-    private Set<Location> locations;
+    private Set<Coordinate> coordinates;
     private int maxCol;
     private int diagramWidth;
     private int diagramHeight;
@@ -45,7 +45,7 @@ public class OrthogonalLayoutAlgorithm implements Algorithm {
 
     public OrthogonalLayoutAlgorithm(Logger logger) {
         this.logger = logger;
-        this.locations =  new HashSet<Location>();
+        this.coordinates =  new HashSet<Coordinate>();
         this.maxCol = 0;
         this.diagramHeight = 0;
         this.diagramWidth = 0;
@@ -208,7 +208,7 @@ public class OrthogonalLayoutAlgorithm implements Algorithm {
 
     private int rightShift(int row, int column) {
         int newColumn = column;
-        while (locations.contains(new Location(row, newColumn))) {
+        while (coordinates.contains(new Coordinate(row, newColumn))) {
             newColumn++;
         }
         return newColumn;
@@ -231,7 +231,7 @@ public class OrthogonalLayoutAlgorithm implements Algorithm {
             currentNode.setAttribute(D_COL, column);
             currentNode.setAttribute(UMLDeploymentDiagram.X_COORDINATE, getXCoordinate(column));
 
-            locations.add(new Location(getRow(currentNode), column));
+            coordinates.add(new Coordinate(getRow(currentNode), column));
 
             logger.out("Index: %s, Previous Node: %s, Current Node: %s, Row: %s (%s), Column: %s (%s)",
                     i, previousNodeId, currentNode.getId(), getRow(currentNode), getYCoordinate(row),

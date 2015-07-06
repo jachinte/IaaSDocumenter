@@ -9,11 +9,11 @@ package com.eu.skyblue.iaasdocumenter.utils;
  */
 
 // Based on http://stackoverflow.com/questions/13434681/how-to-search-an-array-of-coordinates-in-java
-public class Location {
+public class Coordinate {
     private int x;
     private int y;
 
-    public Location(int x, int y) {
+    public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -23,7 +23,7 @@ public class Location {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Location point = (Location) o;
+        Coordinate point = (Coordinate) o;
 
         if (x != point.x) return false;
         if (y != point.y) return false;
@@ -36,5 +36,17 @@ public class Location {
         int result = x;
         result = 31 * result + y;
         return result;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }

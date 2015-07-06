@@ -24,19 +24,19 @@ public class UMLDeploymentDiagram {
     public static final int HORIZONTAL_OFFSET = 10;
     public static final int VERTICAL_OFFSET = 10;
 
-    private Graphics2D document;
-    private int xNodeOffset;
-    private int yNodeOffset;
+
+    public static final int X_NODE_OFFSET = 2;
+    public static final int Y_NODE_OFFSET = 2;
+
+    public static final int FONT_SIZE = 4;
+
     private Font font;
-    private int fontSize;
     FontMetrics fontMetrics;
+    private Graphics2D document;
 
     protected UMLDeploymentDiagram(Graphics2D document) {
         this.document = document;
-        this.xNodeOffset = 2;
-        this.yNodeOffset = 2;
-        this.fontSize = 4;
-        this.font = new Font("serif", Font.PLAIN, this.fontSize);
+        this.font = new Font("serif", Font.PLAIN, FONT_SIZE);
         this.document.setFont(this.font);
         this.fontMetrics = this.document.getFontMetrics();
     }
@@ -47,11 +47,12 @@ public class UMLDeploymentDiagram {
     protected void drawNode(int x, int y, int width, int height, String stereotype, String elementId, String attributes) {
         this.document.drawRect(x, y, width, height);
 
-        this.document.drawLine(x, y, x + xNodeOffset, y - yNodeOffset);
-        this.document.drawLine(x+xNodeOffset, y-yNodeOffset, x+xNodeOffset+width, y-yNodeOffset);
-        this.document.drawLine(x + xNodeOffset + width, y - yNodeOffset, x + width, y);
-        this.document.drawLine(x+xNodeOffset+width, y-yNodeOffset, x+xNodeOffset+width, y-yNodeOffset+height);
-        this.document.drawLine(x + width, y + height, x + xNodeOffset + width, y - yNodeOffset + height);
+        this.document.drawLine(x, y, x + X_NODE_OFFSET, y - Y_NODE_OFFSET);
+        this.document.drawLine(x + X_NODE_OFFSET, y- Y_NODE_OFFSET, x+ X_NODE_OFFSET +width, y- Y_NODE_OFFSET);
+        this.document.drawLine(x + X_NODE_OFFSET + width, y - Y_NODE_OFFSET, x + width, y);
+        this.document.drawLine(x + X_NODE_OFFSET + width, y - Y_NODE_OFFSET, x + X_NODE_OFFSET +width,
+                y - Y_NODE_OFFSET + height);
+        this.document.drawLine(x + width, y + height, x + X_NODE_OFFSET + width, y - Y_NODE_OFFSET + height);
 
         renderNodeText(x, y, width, addGuillemets(stereotype), elementId, attributes);
     }
@@ -62,9 +63,13 @@ public class UMLDeploymentDiagram {
         for (String attribute: nodeAttributes) {
             int stringWidth = fontMetrics.stringWidth(attribute);
             int stringOffsetX = x + (width/2) - (stringWidth/2);
-            stringOffsetY += fontSize + yNodeOffset;
+            stringOffsetY += FONT_SIZE + Y_NODE_OFFSET;
             this.document.drawString(attribute, stringOffsetX, stringOffsetY);
         }
+    }
+
+    protected void drawAssociation(int x1, int y1, int x2, int y2, String stereotype) {
+        this.document.drawLine(x1, y1, x2, y2);
     }
 
     protected void drawArtefact(int x, int y, int width, int height, String stereotype, String elementId,
@@ -79,7 +84,7 @@ public class UMLDeploymentDiagram {
         for (String attribute: artefactAttributes) {
             int stringWidth = fontMetrics.stringWidth(attribute);
             int stringOffsetX = x + (width/2) - (stringWidth/2);
-            stringOffsetY += fontSize + yNodeOffset;
+            stringOffsetY += FONT_SIZE + Y_NODE_OFFSET;
             this.document.drawString(attribute, stringOffsetX, stringOffsetY);
         }
     }
