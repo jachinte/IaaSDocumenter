@@ -42,8 +42,8 @@ public class Main {
 
         // Debug stuff - should be moved into a renderer
         // vpc-8762c3e2 (large), vpc-9371f0f6 (small), vpc-190cb27c (medium)
-        String testGraph = "vpc-190cb27c";
-        //String testGraph = "vpc-8762c3e2";
+        //String testGraph = "vpc-190cb27c";
+        String testGraph = "vpc-8762c3e2";
         List<Graph> g = iaasDocumenter.getGraphs();
         for (Graph graph : iaasDocumenter.getGraphs()) {
             if (graph.getId().equalsIgnoreCase(testGraph)) {
