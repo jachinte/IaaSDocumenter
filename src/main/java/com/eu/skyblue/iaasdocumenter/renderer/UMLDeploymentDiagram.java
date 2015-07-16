@@ -1,5 +1,7 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
+import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
+
 import java.util.Arrays;
 import java.util.List;
 import java.awt.*;
@@ -24,6 +26,10 @@ public class UMLDeploymentDiagram {
     public static final int HORIZONTAL_OFFSET = 10;
     public static final int VERTICAL_OFFSET = 10;
 
+    public static final int DOG_EARED_SHEET_WIDTH = 5;
+    public static final int DOG_EARED_SHEET_VERTICAL_FOLD_HEIGHT = 5;
+    public static final int DOG_EARED_SHEET_HORIZONTAL_FOLD_WIDTH = 3;
+    public static final int DOG_EARED_SHEET_HEIGHT = 7;
 
     public static final int X_NODE_OFFSET = 2;
     public static final int Y_NODE_OFFSET = 2;
@@ -69,13 +75,43 @@ public class UMLDeploymentDiagram {
     }
 
     protected void drawAssociation(int x1, int y1, int x2, int y2, String stereotype) {
-        this.document.drawLine(x1, y1, x2, y2);
+        Stroke originalStroke = document.getStroke();
+        if (stereotype.equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
+            Stroke dashed = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.f, new float[]{2.5f, 1.5f}, 0);
+            document.setStroke(dashed);
+        }
+        document.drawLine(x1, y1, x2, y2);
+        document.setStroke(originalStroke);
+        renderAssociationStereotypeText(x1, y1, x2, y2, addGuillemets(stereotype));
     }
 
     protected void drawArtefact(int x, int y, int width, int height, String stereotype, String elementId,
                              String attributes) {
         this.document.drawRect(x, y, width, height);
+        drawDogearedSheetForArtefact(x, y);
         renderArtefactText(x, y, width, addGuillemets(stereotype), elementId, attributes);
+    }
+
+    private void drawDogearedSheetForArtefact(int x, int y) {
+        int leftmostXCoord = x + ARTEFACT_WIDTH_PIXELS - DOG_EARED_SHEET_WIDTH - X_NODE_OFFSET;
+        int rightmostXCoord = x + ARTEFACT_WIDTH_PIXELS - X_NODE_OFFSET;
+
+        int topmostYCoord = y + Y_NODE_OFFSET;
+        int bottomYCoord = y + Y_NODE_OFFSET + DOG_EARED_SHEET_HEIGHT;
+
+        int foldPointY = bottomYCoord - DOG_EARED_SHEET_VERTICAL_FOLD_HEIGHT;
+        int foldPointX = rightmostXCoord - DOG_EARED_SHEET_HORIZONTAL_FOLD_WIDTH;
+
+        this.document.drawLine(leftmostXCoord, topmostYCoord, leftmostXCoord, bottomYCoord);
+        this.document.drawLine(leftmostXCoord, bottomYCoord, rightmostXCoord, bottomYCoord);
+
+        this.document.drawLine(rightmostXCoord, bottomYCoord, rightmostXCoord, foldPointY);
+        this.document.drawLine(leftmostXCoord, topmostYCoord, foldPointX, topmostYCoord);
+
+        this.document.drawLine(foldPointX, topmostYCoord, rightmostXCoord, foldPointY);
+
+        this.document.drawLine(foldPointX, topmostYCoord, foldPointX, foldPointY);
+        this.document.drawLine(foldPointX, foldPointY, rightmostXCoord, foldPointY);
     }
 
     private void renderArtefactText(int x, int y, int width, String stereotype, String elementId, String attributes) {
@@ -87,6 +123,18 @@ public class UMLDeploymentDiagram {
             stringOffsetY += FONT_SIZE + Y_NODE_OFFSET;
             this.document.drawString(attribute, stringOffsetX, stringOffsetY);
         }
+    }
+
+    private void renderAssociationStereotypeText(int x1, int y1, int x2, int y2, String stereotype) {
+        int stringOffsetY = getMidpoint(y1,y2);
+        int stringOffsetX = getMidpoint(x1,x2);
+        int stringWidth = fontMetrics.stringWidth(stereotype);
+        stringOffsetX = stringOffsetX - (stringWidth/2);
+        this.document.drawString(stereotype, stringOffsetX, stringOffsetY);
+    }
+
+    private int getMidpoint(int p1, int p2) {
+        return Math.max(p1, p2) - ((Math.max(p1,p2) - Math.min(p1,p2))/2);
     }
 
     public Graphics2D getDocument() {

@@ -142,6 +142,8 @@ public class IaaSProfile {
         this.ec2InstanceStereotype = umlProfileBuilder.createStereotype(UMLStereotype.EC2_INSTANCE, Boolean.FALSE);
         Property ami = umlProfileBuilder.createAttribute(this.getEc2InstanceStereotype(), UMLStereotypeProperty.AMI,
                 stringPrimitiveType, 0, 1, null);
+        Property name = umlProfileBuilder.createAttribute(this.getEc2InstanceStereotype(), UMLStereotypeProperty.NAME,
+                stringPrimitiveType, 0, 1, null);
         umlProfileBuilder.createExtension(this.nodeMetaclass, this.getEc2InstanceStereotype(), Boolean.FALSE);
         Generalization generalization = umlProfileBuilder.createGeneralization(this.getEc2InstanceStereotype(),
                 this.getAwsNodeStereotype());

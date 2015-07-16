@@ -3,6 +3,7 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.generator.aws.MetaClass;
 import com.eu.skyblue.iaasdocumenter.renderer.algo.OrthogonalLayoutAlgorithm;
+import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
 import com.eu.skyblue.iaasdocumenter.utils.Coordinate;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 
@@ -13,6 +14,8 @@ import org.graphstream.graph.Node;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,14 +26,17 @@ import java.io.IOException;
  */
 public abstract class AbstractGraphicalFormatRenderer {
     private Logger logger;
-    //private VectorGraphics2D document;
-    //private UMLDeploymentDiagram umlDeploymentDiagram;
+    private Map<String, String> selectedAttributeNames;
 
     private OrthogonalLayoutAlgorithm layoutAlgorithm;
 
     public AbstractGraphicalFormatRenderer(Logger logger) {
         this.logger = logger;
         this.layoutAlgorithm = new OrthogonalLayoutAlgorithm(logger);
+        this.selectedAttributeNames = new HashMap<String, String>();
+        selectedAttributeNames.put(AttributeName.VPC, UMLPrimitiveType.STRING);
+        selectedAttributeNames.put(AttributeName.CIDR_BLOCK, UMLPrimitiveType.STRING);
+        selectedAttributeNames.put(AttributeName.NAME, UMLPrimitiveType.STRING);
     }
 
     // Override in sub class
@@ -60,7 +66,7 @@ public abstract class AbstractGraphicalFormatRenderer {
                             UMLDeploymentDiagram.ARTEFACT_WIDTH_PIXELS,
                             UMLDeploymentDiagram.ARTEFACT_HEIGHT_PIXELS,
                             (String)node.getAttribute(AttributeName.STEREOTYPE),
-                            node.getId(), "{}");
+                            node.getId(), getSelectedAttributes(node));
 
                 } else if (((String)node.getAttribute(AttributeName.METACLASS)).equalsIgnoreCase(MetaClass.ARTEFACT)) {
                     umlDeploymentDiagram.drawArtefact((Integer) node.getAttribute(UMLDeploymentDiagram.X_COORDINATE),
@@ -68,7 +74,7 @@ public abstract class AbstractGraphicalFormatRenderer {
                             UMLDeploymentDiagram.ARTEFACT_WIDTH_PIXELS,
                             UMLDeploymentDiagram.ARTEFACT_HEIGHT_PIXELS,
                             (String) node.getAttribute(AttributeName.STEREOTYPE),
-                            node.getId(), "{}");
+                            node.getId(), getSelectedAttributes(node));
 
                 } else {
                     logger.err("ERROR: Skipped node %s - Invalid metaclass (%s)",
@@ -88,6 +94,28 @@ public abstract class AbstractGraphicalFormatRenderer {
             logger.out("%s,%s - %s,%s", upperLineCoordinate.getX(), upperLineCoordinate.getY(),
                     lowerLineCoordinate.getX(), lowerLineCoordinate.getY());
         }
+    }
+
+    private String getSelectedAttributes(Node node) {
+        StringBuffer attributeValues = new StringBuffer("{");
+        for (String attributeName: node.getEachAttributeKey()) {
+            if (selectedAttributeNames.containsKey(attributeName)) {
+                String attributeType = (String)selectedAttributeNames.get(attributeName);
+                if (attributeType.equalsIgnoreCase(UMLPrimitiveType.STRING)) {
+                    attributeValues.append(attributeName + ": " + (String)node.getAttribute(attributeName));
+                } else if (attributeType.equalsIgnoreCase(UMLPrimitiveType.BOOLEAN)) {
+                    Boolean booleanValue = (Boolean)node.getAttribute(attributeName);
+                    attributeValues.append(attributeName + ": " + booleanValue.toString());
+                }
+                attributeValues.append(",");
+            }
+        }
+        attributeValues.deleteCharAt(attributeValues.length() - 1);
+        if (attributeValues.length() > 0) {
+            attributeValues.append("}");
+        }
+        //attributeValues.append("}");
+        return attributeValues.toString();
     }
 
     private Node getUpperNode(Node node0, Node node1) {

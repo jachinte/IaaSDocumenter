@@ -22,7 +22,7 @@ public class UMLStereotype {
     public static final String EC2_INSTANCE = "EC2Instance";
     public static final String ENI = "ElasticNetworkInterface";
     public static final String DEPENDENCY = "Dependency";
-    public static final String DEPLOYMENT = "Deployment";
+    public static final String DEPLOYMENT = "deploy";
     public static final String NOTE = "Note";
     public static final String VPC = "vpc";
 }

@@ -123,6 +123,12 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (NetworkAcl networkAcl : infrastructureClient.getNetworkAcls(vpc)) {
             this.networkAcls.add(networkAcl);
             addAWSNode(networkAcl.getNetworkAclId(), UMLStereotype.NETWORK_ACL);
+
+            for (Tag tag : networkAcl.getTags()) {
+                if (tag.getKey().equalsIgnoreCase(AttributeName.NAME)) {
+                    sendNodeAttributeAdded(sourceId, networkAcl.getNetworkAclId(), AttributeName.NAME, tag.getValue());
+                }
+            }
         }
     }
 
@@ -131,6 +137,12 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (SecurityGroup securityGroup : infrastructureClient.getSecurityGroups(vpc)) {
             this.securityGroups.add(securityGroup);
             addAWSNode(securityGroup.getGroupId(), UMLStereotype.SECURITY_GROUP);
+
+            for (Tag tag : securityGroup.getTags()) {
+                if (tag.getKey().equalsIgnoreCase(AttributeName.NAME)) {
+                    sendNodeAttributeAdded(sourceId, securityGroup.getGroupId(), AttributeName.NAME, tag.getValue());
+                }
+            }
         }
     }
 
@@ -145,6 +157,12 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
                 sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.NETWORK_INTERFACES, instance.getNetworkInterfaces());
                 sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.SECURITY_GROUPS, instance.getSecurityGroups());
                 sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.SUBNETS, instance.getSubnetId());
+
+                for (Tag tag : instance.getTags()) {
+                    if (tag.getKey().equalsIgnoreCase(AttributeName.NAME)) {
+                        sendNodeAttributeAdded(sourceId, instance.getInstanceId(), AttributeName.NAME, tag.getValue());
+                    }
+                }
             }
         }
     }
