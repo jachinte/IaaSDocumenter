@@ -82,7 +82,53 @@ public class UMLDeploymentDiagram {
         }
         document.drawLine(x1, y1, x2, y2);
         document.setStroke(originalStroke);
+        if (stereotype.equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
+            this.drawArrowhead2(x1, y1, x2, y2);
+        }
         renderAssociationStereotypeText(x1, y1, x2, y2, addGuillemets(stereotype));
+    }
+
+//    private void drawArrowhead2(int x1, int y1, int x2, int y2) {
+//        int dx = x1 - x2;
+//        int dy = y1 - y2;
+//
+//        double dist = Math.sqrt(dx * dx + dy * dy);
+//        int offset = 8;
+//
+//        double nX = dx / dist;
+//        double nY = dy / dist;
+//
+//        double xP = offset * nX;
+//        double yP = offset * nY;
+//
+//        int d2x = dx + (int)yP;
+//        int d2y = dy - (int)xP;
+//
+//        int d3x = dx - (int)yP;
+//        int d3y = dy + (int)xP;
+//
+//        this.document.drawLine(x2,y2, d3x,d3y);
+//
+//    }
+
+    // http://stackoverflow.com/questions/1800138/given-a-start-and-end-point-and-a-distance-calculate-a-point-along-a-line
+    private void drawArrowhead2(int x1, int y1, int x2, int y2) {
+        double vx = x2 - x1;
+        double vy = y2 - y1;
+
+        double distance = 10;
+
+        double len = Math.sqrt(vx * vx + vy * vy);
+
+        vx = vx / len;
+        vy = vy / len;
+
+        int px = (int) Math.abs(((double) x2 + vx * (len + (double)distance)));
+        int py = (int) Math.abs(((double) y2 + vy * (len + (double)distance)));
+        System.out.println("********** X = " + px + ", Y=" + py);
+        System.out.println("********** X1 = " + x1 + ", Y1=" + y1);
+        System.out.println("********** X2 = " + x2 + ", Y2=" + y2);
+        this.document.drawLine(px,py, 0,0);
     }
 
     protected void drawArtefact(int x, int y, int width, int height, String stereotype, String elementId,

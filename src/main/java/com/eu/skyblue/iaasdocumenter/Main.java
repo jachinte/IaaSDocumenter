@@ -3,10 +3,7 @@ package com.eu.skyblue.iaasdocumenter;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
-import com.eu.skyblue.iaasdocumenter.renderer.GraphRenderer;
-import com.eu.skyblue.iaasdocumenter.renderer.GraphicalRenderer;
-import com.eu.skyblue.iaasdocumenter.renderer.PDFFormatRenderer;
-import com.eu.skyblue.iaasdocumenter.renderer.SVGFormatRenderer;
+import com.eu.skyblue.iaasdocumenter.renderer.*;
 import com.eu.skyblue.iaasdocumenter.renderer.algo.OrthogonalLayoutAlgorithm;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
@@ -52,8 +49,8 @@ public class Main {
                 //HierarchicalLayout hl = new HierarchicalLayout();
                 //v.enableAutoLayout(hl);
 
-                //GraphRenderer xmiRenderer = new XMIRenderer(iaaSProfile, logger);
-                //xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
+                GraphRenderer xmiRenderer = new XMIRenderer(iaaSProfile, logger);
+                xmiRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
 
                 //GraphicalRenderer
                 //GraphRenderer graphicalRenderer = new GraphicalRenderer(logger);
@@ -66,8 +63,8 @@ public class Main {
                 //GraphRenderer svgRenderer = new SVGFormatRenderer(logger);
                 //svgRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
 
-                GraphRenderer pdfRenderer = new PDFFormatRenderer(logger);
-                pdfRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
+                //GraphRenderer pdfRenderer = new PDFFormatRenderer(logger);
+                //pdfRenderer.render(graph, "/Users/raye/tmp/" + graph.getId());
 
 
 

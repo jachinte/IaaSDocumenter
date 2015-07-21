@@ -3,8 +3,11 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.generator.aws.MetaClass;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
+import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
+import com.eu.skyblue.iaasdocumenter.uml.UMLStereotypeProperty;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -142,10 +145,48 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
                         deploymentView.createPackagedElement(node.getId(), getEClass(node));
                 vpcArtefacts.put(node.getId(), packageableElement);
                 applyStereotype(packageableElement, (String)node.getAttribute(AttributeName.STEREOTYPE));
+
+                addProperties(packageableElement, node);
             } catch (Exception e) {
                 logger.err("Error while adding %s %s: '%s'", node.getAttribute(AttributeName.METACLASS),
                         node.getId(), e.getMessage());
             }
+        }
+    }
+
+    private void addProperties(PackageableElement packageableElement, Node node) {
+        EList<Stereotype> stereotypes = packageableElement.getAppliedStereotypes();
+        Iterator<Stereotype> stereotypeIterator = stereotypes.iterator();
+        while (stereotypeIterator.hasNext()) {
+            Stereotype stereotype = stereotypeIterator.next();
+            System.out.println("AP STEREOTYPE: " + stereotype.getName());
+
+            EList<Property> properties = stereotype.getAllAttributes();
+            List<String> stereotypeProperties = new ArrayList<String>();
+            Iterator<Property> propertyIterator = properties.iterator();
+            while(propertyIterator.hasNext()) {
+                Property property = propertyIterator.next();
+                stereotypeProperties.add(property.getName());
+                System.out.println(stereotype.getName() + " -> " + property.getName());
+            }
+
+            for (String attributeName: node.getEachAttributeKey()) {
+                String attributeType = UMLStereotypeProperty.ATTRIBUTE_TYPE_MAP.get(attributeName);
+                if (stereotypeProperties.contains(attributeName)) {
+                    System.out.println(" found: " + attributeName);
+                    if (attributeType.equalsIgnoreCase(UMLPrimitiveType.STRING)) {
+                        packageableElement.setValue(stereotype, attributeName, node.getAttribute(attributeName));
+                    } else if (attributeType.equalsIgnoreCase(UMLPrimitiveType.BOOLEAN)) {
+                        packageableElement.setValue(stereotype, attributeName,
+                                ((Boolean)node.getAttribute(attributeName)).toString());
+                    }
+                }
+            }
+            if (stereotypeProperties.contains(UMLStereotypeProperty.ID)) {
+                packageableElement.setValue(stereotype, UMLStereotypeProperty.ID, node.getId());
+            }
+
+
         }
     }
 
