@@ -87,6 +87,7 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
             if (((String)edge.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
                 PackageableElement packageableElement =
                         deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getDeployment());
+                createDeploymentAssociation(edge, packageableElement);
                 vpcArtefacts.put(edge.getId(), packageableElement);
             } else {
                 PackageableElement packageableElement =
@@ -101,6 +102,21 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
 
                 applyStereotype(packageableElement, (String)edge.getAttribute(AttributeName.STEREOTYPE));
             }
+        }
+    }
+
+    private void createDeploymentAssociation(Edge edge, PackageableElement packageableElement) {
+        Node node0 = edge.getNode0();
+        Node node1 = edge.getNode1();
+        if (((String)node0.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.ROUTER)) {
+            //((Deployment)packageableElement).setLocation((DeploymentTarget)this.vpcArtefacts.get(node0.getId()));
+
+            ((DeploymentTarget)this.vpcArtefacts.get(node0.getId())).createDependency((Artifact)this.vpcArtefacts.get(node1.getId()));
+            //packageableElement.createDependency((Artifact)this.vpcArtefacts.get(node1.getId()));   // Creates new dependency
+        } else {
+            //((Deployment)packageableElement).setLocation((DeploymentTarget)this.vpcArtefacts.get(node1.getId()));
+            ((DeploymentTarget)this.vpcArtefacts.get(node1.getId())).createDependency((Artifact)this.vpcArtefacts.get(node0.getId()));
+            //packageableElement.createDependency((Artifact)this.vpcArtefacts.get(node0.getId()));  // Creates new dependency
         }
     }
 
