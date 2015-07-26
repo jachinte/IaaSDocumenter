@@ -5,6 +5,7 @@ import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
 import com.eu.skyblue.iaasdocumenter.renderer.*;
 import com.eu.skyblue.iaasdocumenter.renderer.algo.OrthogonalLayoutAlgorithm;
+import com.eu.skyblue.iaasdocumenter.ui.CommandLineInterface;
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.graph.Graph;
@@ -24,7 +25,10 @@ public class Main {
     private static IaasDocumenter iaasDocumenter;
     public static void main(String[] args) {
         System.out.println("*** IaaSDocumenter! ***");
+        CommandLineInterface cli = new CommandLineInterface();
+        cli.parseArgs(args);
 
+        /*
         Logger logger = new Logger(Boolean.TRUE);
         IaaSProfile iaaSProfile = new IaaSProfile(logger);
 
@@ -75,6 +79,7 @@ public class Main {
             }
             System.out.println("--------------------------------------------");
         }
+        */
 
 
 
