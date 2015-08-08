@@ -2,7 +2,6 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import de.erichseifert.vectorgraphics2d.PDFGraphics2D;
-import de.erichseifert.vectorgraphics2d.SVGGraphics2D;
 import org.graphstream.graph.Graph;
 
 import java.awt.*;

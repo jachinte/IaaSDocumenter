@@ -128,7 +128,7 @@ public class UMLDeploymentDiagram {
         System.out.println("********** X = " + px + ", Y=" + py);
         System.out.println("********** X1 = " + x1 + ", Y1=" + y1);
         System.out.println("********** X2 = " + x2 + ", Y2=" + y2);
-        this.document.drawLine(px,py, 0,0);
+        //this.document.drawLine(px,py, 0,0);
     }
 
     protected void drawArtefact(int x, int y, int width, int height, String stereotype, String elementId,

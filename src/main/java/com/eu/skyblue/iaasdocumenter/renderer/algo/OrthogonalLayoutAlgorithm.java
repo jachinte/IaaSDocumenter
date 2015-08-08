@@ -21,8 +21,8 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public class OrthogonalLayoutAlgorithm implements Algorithm {
-    private static int ROW_VPC = 1;
-    private static int ROW_IGW = 2;
+    private static int ROW_VPC = 2;
+    private static int ROW_IGW = 1;
     private static int ROW_ROUTE_TABLE = 3;
     private static int ROW_VPC_ROUTER = 4;
     private static int ROW_ACL = 5;

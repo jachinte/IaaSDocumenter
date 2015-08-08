@@ -10,6 +10,7 @@ import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -85,10 +86,8 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
                     edge.getAttribute(AttributeName.STEREOTYPE));
 
             if (((String)edge.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
-                PackageableElement packageableElement =
-                        deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getDeployment());
-                createDeploymentAssociation(edge, packageableElement);
-                vpcArtefacts.put(edge.getId(), packageableElement);
+                createDeploymentAssociation(edge);
+                logger.out("[create deployment]: %s, %s", edge.getId(), (String)edge.getAttribute(AttributeName.STEREOTYPE));
             } else {
                 PackageableElement packageableElement =
                         deploymentView.createPackagedElement(edge.getId(), UMLPackage.eINSTANCE.getAssociation());
@@ -101,23 +100,26 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
                         (Type) this.vpcArtefacts.get(edge.getNode0().getId()));
 
                 applyStereotype(packageableElement, (String)edge.getAttribute(AttributeName.STEREOTYPE));
+                logger.out("[create assoc]: %s, %s", edge.getId(), (String)edge.getAttribute(AttributeName.STEREOTYPE));
             }
         }
     }
 
-    private void createDeploymentAssociation(Edge edge, PackageableElement packageableElement) {
+    private void createDeploymentAssociation(Edge edge) {
         Node node0 = edge.getNode0();
         Node node1 = edge.getNode1();
-        if (((String)node0.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.ROUTER)) {
-            //((Deployment)packageableElement).setLocation((DeploymentTarget)this.vpcArtefacts.get(node0.getId()));
+        Deployment d;
 
-            ((DeploymentTarget)this.vpcArtefacts.get(node0.getId())).createDependency((Artifact)this.vpcArtefacts.get(node1.getId()));
-            //packageableElement.createDependency((Artifact)this.vpcArtefacts.get(node1.getId()));   // Creates new dependency
+        if (((String)node0.getAttribute(AttributeName.STEREOTYPE)).equalsIgnoreCase(UMLStereotype.ROUTER)) {
+            d = ((DeploymentTarget)this.vpcArtefacts.get(node0.getId())).createDeployment(edge.getId());
+            EList<NamedElement> e = d.getSuppliers();
+            e.add((Artifact)this.vpcArtefacts.get(node1.getId()));
         } else {
-            //((Deployment)packageableElement).setLocation((DeploymentTarget)this.vpcArtefacts.get(node1.getId()));
-            ((DeploymentTarget)this.vpcArtefacts.get(node1.getId())).createDependency((Artifact)this.vpcArtefacts.get(node0.getId()));
-            //packageableElement.createDependency((Artifact)this.vpcArtefacts.get(node0.getId()));  // Creates new dependency
+            d = ((DeploymentTarget)this.vpcArtefacts.get(node1.getId())).createDeployment(edge.getId());
+            EList<NamedElement> e = d.getSuppliers();
+            e.add((Artifact)this.vpcArtefacts.get(node0.getId()));
         }
+        vpcArtefacts.put(edge.getId(), d);
     }
 
     private void applyStereotype(PackageableElement packageableElement, String stereotypeAttribute) {

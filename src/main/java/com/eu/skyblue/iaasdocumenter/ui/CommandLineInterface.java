@@ -9,6 +9,7 @@ import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.apache.commons.cli.*;
 import org.graphstream.graph.Graph;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,6 +23,7 @@ public class CommandLineInterface {
     private Options options;
     private CommandLineParser commandLineParser;
     private static IaasDocumenter iaasDocumenter;
+    private static String CURRENT_WORKING_PATH = ".";
 
     public CommandLineInterface() {
         this.commandLineParser = new DefaultParser();
@@ -75,9 +77,9 @@ public class CommandLineInterface {
             } else if (line.hasOption("list-regions")) {
                 listRegions();
             } else if (line.hasOption("display-format") && line.hasOption("aws-region")) {
-                String outputFolder = "./";
+                String outputFolder = "";
                 if (line.hasOption("output-folder")) {
-                    outputFolder = line.getOptionValue("output-folder");
+                    outputFolder = fixFilePath(line.getOptionValue("output-folder"));
                 }
                 renderGraphs(logger, line.getOptionValue("display-format"), outputFolder, Regions.US_WEST_2);
             } else {
@@ -87,6 +89,18 @@ public class CommandLineInterface {
             System.err.println("Unexpected exception:" + p.getMessage());
         } catch (Exception e) {
             System.err.println(e.getMessage());
+        }
+    }
+
+    private String fixFilePath(String filePath) {
+        if (filePath.length() == 0) {
+            return CURRENT_WORKING_PATH + File.separator;
+        }
+
+        if (filePath.charAt(filePath.length() - 1) != File.separatorChar) {
+            return filePath + File.separator;
+        } else {
+            return filePath;
         }
     }
 

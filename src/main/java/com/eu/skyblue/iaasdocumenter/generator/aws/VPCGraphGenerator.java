@@ -251,7 +251,10 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     }
 
     private void addLinks() {
-        createLinkInternetGatewayToImplictRouter();
+        //createLinkInternetGatewayToImplictRouter();
+        createLinkInternetGatewayToVpc();
+
+        createLinkImplicitRouterToVpc();
 
         createLinksRoutingTableToImplicitRouter();
 
@@ -261,7 +264,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
         createLinksElasticLoadBalancersToSubnetsAndSecurityGroups();
 
-        createLinkImplicitRouterOrInternetGatewayToVpc();
+        //createLinkImplicitRouterOrInternetGatewayToVpc();
     }
 
     private void addAWSAssociation(String edgeId, String fromNodeId, String toNodeId, boolean directed,
@@ -376,6 +379,20 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
         for (InternetGateway internetGateway : this.internetGateways) {
             String edgeId = internetGateway.getInternetGatewayId() + AttributeName.TOKEN_SEPARATOR + AttributeName.VPC_ROUTER;
             addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), AttributeName.VPC_ROUTER, false, UMLStereotype.OSI_LAYER2_LINK);
+        }
+    }
+
+    private void createLinkImplicitRouterToVpc() {
+        String edgeId = AttributeName.VPC_ROUTER + AttributeName.TOKEN_SEPARATOR + vpc.getVpcId();
+        addAWSAssociation(edgeId, AttributeName.VPC_ROUTER, vpc.getVpcId(), false, UMLStereotype.OSI_LAYER2_LINK);
+    }
+
+    private void createLinkInternetGatewayToVpc() {
+        if (this.internetGateways.size() > 0) {
+            for (InternetGateway internetGateway : this.internetGateways) {
+                String edgeId = internetGateway.getInternetGatewayId() + AttributeName.TOKEN_SEPARATOR + vpc.getVpcId();
+                addAWSAssociation(edgeId, internetGateway.getInternetGatewayId(), vpc.getVpcId(), false, UMLStereotype.OSI_LAYER2_LINK);
+            }
         }
     }
 

@@ -24,5 +24,5 @@ public class UMLStereotype {
     public static final String DEPENDENCY = "Dependency";
     public static final String DEPLOYMENT = "deploy";
     public static final String NOTE = "Note";
-    public static final String VPC = "vpc";
+    public static final String VPC = "VirtualPrivateCloud";
 }
