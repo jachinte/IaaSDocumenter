@@ -2,7 +2,7 @@ package com.eu.skyblue.iaasdocumenter.generator.aws;
 
 import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.services.elasticloadbalancing.model.LoadBalancerDescription;
-import com.eu.skyblue.iaasdocumenter.documenter.aws.InfrastructureClient;
+import com.eu.skyblue.iaasdocumenter.documenter.AWSInfrastructureClient;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import org.graphstream.algorithm.generator.BaseGenerator;
 import org.graphstream.algorithm.generator.Generator;
@@ -19,7 +19,7 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class VPCGraphGenerator extends BaseGenerator implements Generator {
-    private InfrastructureClient infrastructureClient;
+    private AWSInfrastructureClient awsInfrastructureClient;
     private Vpc vpc;
     private Graph vpcGraph;
 
@@ -32,8 +32,8 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
     private List<NetworkInterface> networkInterfaces;
     private List<LoadBalancerDescription> loadBalancerDescriptions;
 
-    protected VPCGraphGenerator(InfrastructureClient infrastructureClient, Vpc vpc, Graph vpcGraph) {
-        this.infrastructureClient = infrastructureClient;
+    protected VPCGraphGenerator(AWSInfrastructureClient awsInfrastructureClient, Vpc vpc, Graph vpcGraph) {
+        this.awsInfrastructureClient = awsInfrastructureClient;
         this.vpc = vpc;
         this.vpcGraph = vpcGraph;
 
@@ -105,7 +105,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addInternetGateways() {
         // Populate graph with internet gateways
-        for (InternetGateway internetGateway : infrastructureClient.getInternetGateways(vpc)) {
+        for (InternetGateway internetGateway : awsInfrastructureClient.getInternetGateways(vpc)) {
             this.internetGateways.add(internetGateway);
 
             addAWSNode(internetGateway.getInternetGatewayId(), UMLStereotype.INTERNET_GATEWAY);
@@ -120,7 +120,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addNetworkAcls() {
         // Populate graph with Network ACLs
-        for (NetworkAcl networkAcl : infrastructureClient.getNetworkAcls(vpc)) {
+        for (NetworkAcl networkAcl : awsInfrastructureClient.getNetworkAcls(vpc)) {
             this.networkAcls.add(networkAcl);
             addAWSNode(networkAcl.getNetworkAclId(), UMLStereotype.NETWORK_ACL);
 
@@ -134,7 +134,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addSecurityGroups() {
         // Populate graph with Security Groups
-        for (SecurityGroup securityGroup : infrastructureClient.getSecurityGroups(vpc)) {
+        for (SecurityGroup securityGroup : awsInfrastructureClient.getSecurityGroups(vpc)) {
             this.securityGroups.add(securityGroup);
             addAWSNode(securityGroup.getGroupId(), UMLStereotype.SECURITY_GROUP);
 
@@ -148,7 +148,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addEc2Instances() {
         // Populate graph with EC2 instances
-        for (Reservation reservation : infrastructureClient.getInstances(vpc)) {
+        for (Reservation reservation : awsInfrastructureClient.getInstances(vpc)) {
             for (Instance instance : reservation.getInstances()) {
                 this.instances.add(instance);
 
@@ -169,7 +169,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addLoadBalancers() {
         // Populate graph with load balancers (filtering on VPC needed here)
-        for (LoadBalancerDescription loadBalancerDescription : infrastructureClient.getElasticLoadBalancers(vpc)) {
+        for (LoadBalancerDescription loadBalancerDescription : awsInfrastructureClient.getElasticLoadBalancers(vpc)) {
             this.loadBalancerDescriptions.add(loadBalancerDescription);
 
             addAWSNode(loadBalancerDescription.getLoadBalancerName(), UMLStereotype.ELASTIC_LB);
@@ -190,7 +190,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addNetworkInterfaces() {
         // Populate graph with network interfaces
-        for (NetworkInterface networkInterface : infrastructureClient.getNeworkInterfaces(vpc)) {
+        for (NetworkInterface networkInterface : awsInfrastructureClient.getNeworkInterfaces(vpc)) {
             this.networkInterfaces.add(networkInterface);
 
             addAWSArtefact(networkInterface.getNetworkInterfaceId(), UMLStereotype.ENI);
@@ -206,7 +206,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addSubnets() {
         // Populate graph with Subnets
-        for (Subnet subnet : infrastructureClient.getSubnets(vpc)) {
+        for (Subnet subnet : awsInfrastructureClient.getSubnets(vpc)) {
             this.subnets.add(subnet);
 
             addAWSArtefact(subnet.getSubnetId(), UMLStereotype.SUBNET);
@@ -218,7 +218,7 @@ public class VPCGraphGenerator extends BaseGenerator implements Generator {
 
     private void addRouteTables() {
         // Populate graph with route tables
-        for (RouteTable routeTable : infrastructureClient.getRouteTables(vpc)) {
+        for (RouteTable routeTable : awsInfrastructureClient.getRouteTables(vpc)) {
             this.routeTables.add(routeTable);
 
             addAWSArtefact(routeTable.getRouteTableId(), UMLStereotype.ROUTE_TABLE);

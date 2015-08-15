@@ -1,8 +1,7 @@
-package com.eu.skyblue.iaasdocumenter.documenter.aws;
+package com.eu.skyblue.iaasdocumenter.documenter;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.model.Vpc;
-import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.generator.aws.GeneratorFactory;
 import org.graphstream.algorithm.generator.Generator;
@@ -19,22 +18,22 @@ import java.util.List;
  * Time: 09:17
  * To change this template use File | Settings | File Templates.
  */
-public class VPCDocumenter implements IaasDocumenter {
-    private InfrastructureClient infrastructureClient;
+public class AWSVPCDocumenter implements IaasDocumenter {
+    private AWSInfrastructureClient awsInfrastructureClient;
     private List<Graph> graphList;
 
-    protected VPCDocumenter(InfrastructureClient infrastructureClient) throws Exception {
-        this.infrastructureClient = infrastructureClient;
+    protected AWSVPCDocumenter(AWSInfrastructureClient awsInfrastructureClient) throws Exception {
+        this.awsInfrastructureClient = awsInfrastructureClient;
         this.graphList = new ArrayList<Graph>();
     }
 
     // Get list of VPCs and create graphs for them
     public void createInventory() throws AmazonServiceException {
-        for (Vpc vpc: infrastructureClient.getVpcs()) {
+        for (Vpc vpc: awsInfrastructureClient.getVpcs()) {
             Graph vpcGraph = new MultiGraph(vpc.getVpcId());
             vpcGraph.addAttribute(AttributeName.CIDR_BLOCK, vpc.getCidrBlock());
 
-            Generator vpcGraphGenerator = GeneratorFactory.createVPCGenerator(this.infrastructureClient, vpc, vpcGraph);
+            Generator vpcGraphGenerator = GeneratorFactory.createVPCGenerator(this.awsInfrastructureClient, vpc, vpcGraph);
 
             vpcGraphGenerator.addSink(vpcGraph);
             vpcGraphGenerator.begin();

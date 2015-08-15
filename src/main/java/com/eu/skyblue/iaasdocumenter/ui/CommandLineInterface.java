@@ -1,13 +1,19 @@
 package com.eu.skyblue.iaasdocumenter.ui;
 
+import com.amazonaws.regions.RegionUtils;
 import com.amazonaws.regions.Regions;
 import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
-import com.eu.skyblue.iaasdocumenter.documenter.aws.DocumenterFactory;
+import com.eu.skyblue.iaasdocumenter.documenter.DocumenterFactory;
 import com.eu.skyblue.iaasdocumenter.renderer.GraphRenderer;
 import com.eu.skyblue.iaasdocumenter.renderer.RendererFactory;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.apache.commons.cli.*;
 import org.graphstream.graph.Graph;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
 
 import java.io.File;
 import java.util.List;
@@ -41,7 +47,7 @@ public class CommandLineInterface {
                 .longOpt("display-format")
                 .required(false)
                 .hasArg()
-                .desc("Display format [XMI|SVG|PDF|RAW_GRAPH]")
+                .desc("Display format [XMI|SVG|PDF|EPS|RAW_GRAPH]")
                 .build());
 
         options.addOption(Option.builder("r")
@@ -81,7 +87,13 @@ public class CommandLineInterface {
                 if (line.hasOption("output-folder")) {
                     outputFolder = fixFilePath(line.getOptionValue("output-folder"));
                 }
-                renderGraphs(logger, line.getOptionValue("display-format"), outputFolder, Regions.US_WEST_2);
+
+                try {
+                    Regions region = getRegion(line.getOptionValue("aws-region"));
+                    renderGraphs(logger, line.getOptionValue("display-format"), outputFolder, region); //Regions.US_WEST_2
+                } catch(IllegalArgumentException iae) {
+                    logger.err("Invalid Argument Error: " + iae.getMessage());
+                }
             } else {
                 displayHelp();
             }
@@ -111,8 +123,25 @@ public class CommandLineInterface {
         formatter.printHelp("IaaSDocumenter.jar", header, options, footer, true);
     }
 
+    private AWSCredentials getAWSCRedentials() throws AmazonClientException {
+        try {
+            return new ProfileCredentialsProvider().getCredentials();
+        } catch (Exception e) {
+            throw new AmazonClientException("Unable to load credentials", e);
+        }
+    }
+
+    private Regions getRegion(String regionName) throws IllegalArgumentException {
+        return Regions.fromName(regionName);
+    }
+
     private void listRegions() {
-        System.out.println("AWS region list");
+        System.out.println("AWS region list:");
+
+        List<Region> regionList = RegionUtils.getRegions();
+        for (Region region : regionList) {
+            System.out.println(region.getName());
+        }
     }
 
     private void renderGraphs(Logger logger, String displayFormat, String outputFolder, Regions region) throws Exception {

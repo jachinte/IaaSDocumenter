@@ -1,7 +1,7 @@
 package com.eu.skyblue.iaasdocumenter.generator.aws;
 
 import com.amazonaws.services.ec2.model.Vpc;
-import com.eu.skyblue.iaasdocumenter.documenter.aws.InfrastructureClient;
+import com.eu.skyblue.iaasdocumenter.documenter.AWSInfrastructureClient;
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
 
@@ -15,7 +15,7 @@ import org.graphstream.graph.Graph;
 public class GeneratorFactory {
     private GeneratorFactory() {}
 
-    public static Generator createVPCGenerator(InfrastructureClient infrastructureClient, Vpc vpc, Graph vpcGraph) {
-        return new VPCGraphGenerator(infrastructureClient, vpc, vpcGraph);
+    public static Generator createVPCGenerator(AWSInfrastructureClient awsInfrastructureClient, Vpc vpc, Graph vpcGraph) {
+        return new VPCGraphGenerator(awsInfrastructureClient, vpc, vpcGraph);
     }
 }

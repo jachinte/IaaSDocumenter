@@ -1,7 +1,6 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
 import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
-import com.eu.skyblue.iaasdocumenter.utils.DisplayFormat;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 
 /**
@@ -22,6 +21,8 @@ public class RendererFactory {
             return new PDFFormatRenderer(logger);
         } else if (displayFormat.equalsIgnoreCase(DisplayFormat.SVG)) {
             return new SVGFormatRenderer(logger);
+        } else if (displayFormat.equalsIgnoreCase(DisplayFormat.EPS)) {
+            return new EPSFormatRenderer(logger);
         } else {
             throw new Exception("Unknown format");
         }

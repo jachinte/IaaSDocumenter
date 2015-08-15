@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.utils;
+package com.eu.skyblue.iaasdocumenter.renderer;
 
 /**
  * Created with IntelliJ IDEA.

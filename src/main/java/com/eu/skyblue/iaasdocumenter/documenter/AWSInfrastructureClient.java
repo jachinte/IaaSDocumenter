@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.documenter.aws;
+package com.eu.skyblue.iaasdocumenter.documenter;
 
 import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.model.*;
@@ -15,13 +15,13 @@ import java.util.List;
  * Time: 09:13
  * To change this template use File | Settings | File Templates.
  */
-public class InfrastructureClient {
+public class AWSInfrastructureClient {
     public static final String VPC_ID = "vpc-id";
     public static final String IGW_ATTACHMENT_VPC_ID = "attachment.vpc-id";
     private AmazonEC2 ec2;
     private AmazonElasticLoadBalancing elb;
 
-    protected InfrastructureClient(AmazonEC2 ec2, AmazonElasticLoadBalancing elb) throws  Exception {
+    protected AWSInfrastructureClient(AmazonEC2 ec2, AmazonElasticLoadBalancing elb) throws  Exception {
         this.ec2 = ec2;
         this.elb = elb;
     }

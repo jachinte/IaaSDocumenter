@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.documenter.aws;
+package com.eu.skyblue.iaasdocumenter.documenter;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
@@ -9,7 +9,6 @@ import com.amazonaws.services.ec2.AmazonEC2;
 import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancing;
 import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancingClient;
-import com.eu.skyblue.iaasdocumenter.documenter.IaasDocumenter;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,6 +34,6 @@ public class DocumenterFactory {
 
         AmazonElasticLoadBalancing elb = new AmazonElasticLoadBalancingClient(awsCredentials);
         elb.setRegion(Region.getRegion(region));
-        return new VPCDocumenter(new InfrastructureClient(ec2, elb));
+        return new AWSVPCDocumenter(new AWSInfrastructureClient(ec2, elb));
     }
 }

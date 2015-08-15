@@ -3,7 +3,7 @@ package com.eu.skyblue.iaasdocumenter.renderer.algo;
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.renderer.UMLDeploymentDiagram;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
-import com.eu.skyblue.iaasdocumenter.utils.Coordinate;
+import com.eu.skyblue.iaasdocumenter.renderer.Coordinate;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.graphstream.algorithm.Algorithm;
 import org.graphstream.graph.Graph;
@@ -20,7 +20,7 @@ import java.util.Set;
  * Time: 20:27
  * To change this template use File | Settings | File Templates.
  */
-public class OrthogonalLayoutAlgorithm implements Algorithm {
+public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algorithm {
     private static int ROW_VPC = 2;
     private static int ROW_IGW = 1;
     private static int ROW_ROUTE_TABLE = 3;
@@ -43,7 +43,7 @@ public class OrthogonalLayoutAlgorithm implements Algorithm {
     private int diagramHeight;
     private int lastRow;
 
-    public OrthogonalLayoutAlgorithm(Logger logger) {
+    public AWSInfrastructureDeploymentDiagramLayoutAlgorithm(Logger logger) {
         this.logger = logger;
         this.coordinates =  new HashSet<Coordinate>();
         this.maxCol = 0;

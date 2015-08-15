@@ -2,9 +2,8 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 
 import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
 import com.eu.skyblue.iaasdocumenter.generator.aws.MetaClass;
-import com.eu.skyblue.iaasdocumenter.renderer.algo.OrthogonalLayoutAlgorithm;
+import com.eu.skyblue.iaasdocumenter.renderer.algo.AWSInfrastructureDeploymentDiagramLayoutAlgorithm;
 import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
-import com.eu.skyblue.iaasdocumenter.utils.Coordinate;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 
 import de.erichseifert.vectorgraphics2d.*;
@@ -12,8 +11,6 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,11 +25,11 @@ public abstract class AbstractGraphicalFormatRenderer {
     private Logger logger;
     private Map<String, String> selectedAttributeNames;
 
-    private OrthogonalLayoutAlgorithm layoutAlgorithm;
+    private AWSInfrastructureDeploymentDiagramLayoutAlgorithm layoutAlgorithm;
 
     public AbstractGraphicalFormatRenderer(Logger logger) {
         this.logger = logger;
-        this.layoutAlgorithm = new OrthogonalLayoutAlgorithm(logger);
+        this.layoutAlgorithm = new AWSInfrastructureDeploymentDiagramLayoutAlgorithm(logger);
         this.selectedAttributeNames = new HashMap<String, String>();
         selectedAttributeNames.put(AttributeName.VPC, UMLPrimitiveType.STRING);
         selectedAttributeNames.put(AttributeName.CIDR_BLOCK, UMLPrimitiveType.STRING);
@@ -172,7 +169,7 @@ public abstract class AbstractGraphicalFormatRenderer {
         return new Coordinate(xCoordinate, yCoordinate);
     }
 
-    public OrthogonalLayoutAlgorithm getLayoutAlgorithm() {
+    public AWSInfrastructureDeploymentDiagramLayoutAlgorithm getLayoutAlgorithm() {
         return layoutAlgorithm;
     }
 }
