@@ -1,6 +1,6 @@
 package com.eu.skyblue.iaasdocumenter.renderer.algo;
 
-import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
+import com.eu.skyblue.iaasdocumenter.generator.AttributeName;
 import com.eu.skyblue.iaasdocumenter.renderer.UMLDeploymentDiagram;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import com.eu.skyblue.iaasdocumenter.renderer.Coordinate;

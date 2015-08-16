@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.generator.aws;
+package com.eu.skyblue.iaasdocumenter.generator;
 
 import com.amazonaws.services.ec2.model.*;
 import com.amazonaws.services.elasticloadbalancing.model.LoadBalancerDescription;

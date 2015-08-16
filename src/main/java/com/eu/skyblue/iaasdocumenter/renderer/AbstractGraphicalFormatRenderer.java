@@ -1,7 +1,7 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
-import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
-import com.eu.skyblue.iaasdocumenter.generator.aws.MetaClass;
+import com.eu.skyblue.iaasdocumenter.generator.AttributeName;
+import com.eu.skyblue.iaasdocumenter.generator.MetaClass;
 import com.eu.skyblue.iaasdocumenter.renderer.algo.AWSInfrastructureDeploymentDiagramLayoutAlgorithm;
 import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;

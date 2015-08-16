@@ -2,8 +2,8 @@ package com.eu.skyblue.iaasdocumenter.documenter;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.model.Vpc;
-import com.eu.skyblue.iaasdocumenter.generator.aws.AttributeName;
-import com.eu.skyblue.iaasdocumenter.generator.aws.GeneratorFactory;
+import com.eu.skyblue.iaasdocumenter.generator.AttributeName;
+import com.eu.skyblue.iaasdocumenter.generator.GeneratorFactory;
 import org.graphstream.algorithm.generator.Generator;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;

@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.generator.aws;
+package com.eu.skyblue.iaasdocumenter.generator;
 
 /**
  * Created with IntelliJ IDEA.

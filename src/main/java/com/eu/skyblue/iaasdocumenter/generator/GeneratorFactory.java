@@ -1,4 +1,4 @@
-package com.eu.skyblue.iaasdocumenter.generator.aws;
+package com.eu.skyblue.iaasdocumenter.generator;
 
 import com.amazonaws.services.ec2.model.Vpc;
 import com.eu.skyblue.iaasdocumenter.documenter.AWSInfrastructureClient;
