@@ -5,6 +5,7 @@ import com.eu.skyblue.iaasdocumenter.renderer.UMLDeploymentDiagram;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import com.eu.skyblue.iaasdocumenter.renderer.Coordinate;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
+
 import org.graphstream.algorithm.Algorithm;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -14,11 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 02/07/15
- * Time: 20:27
- * To change this template use File | Settings | File Templates.
+ * Algorithm for diagram layout
  */
 public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algorithm {
     private static int ROW_VPC = 2;
@@ -43,6 +40,11 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
     private int diagramHeight;
     private int lastRow;
 
+    /**
+     * Constructs a new <code>AWSInfrastructureDeploymentDiagramLayoutAlgorithm</code> object.
+     *
+     * @param logger         Logger
+     */
     public AWSInfrastructureDeploymentDiagramLayoutAlgorithm(Logger logger) {
         this.logger = logger;
         this.coordinates =  new HashSet<Coordinate>();
@@ -52,11 +54,19 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
         this.lastRow = ROW_SECURITY_GROUP;
     }
 
+    /**
+     * Initializes the algorithm.
+     *
+     * @param graph  The graph to be processed with this algorithm.
+     */
     @Override
     public void init(Graph graph) {
         this.vpcGraph = graph;
     }
 
+    /**
+     * Processes the graph.
+     */
     @Override
     public void compute() {
         dfsTraverse();
@@ -66,10 +76,20 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
         logger.out("Height: %s, Width: %s", getDiagramHeght(), getDiagramWidth());
     }
 
+    /**
+     * Returns the diagram height.
+     *
+     * @return Diagram height
+     */
     public int getDiagramHeght() {
         return this.diagramHeight;
     }
 
+    /**
+     * Returns the diagram width.
+     *
+     * @return Diagram width
+     */
     public int getDiagramWidth() {
         return this.diagramWidth;
     }
@@ -99,7 +119,7 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
         return row;
     }
 
-    // needs refactoring
+    // Code smell. Major need for refactoring!
     private boolean sameColumn(Node previousNode, Node currentNode) {
         String currentNodeStereotype = currentNode.getAttribute(AttributeName.STEREOTYPE);
         String previousNodeStereotype = previousNode.getAttribute(AttributeName.STEREOTYPE);
@@ -148,6 +168,7 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
         return false;
     }
 
+    // Code smell. Major need for refactoring!
     private boolean nextColumn(Node previousNode, Node currentNode) {
         String previousNodeStereotype = previousNode.getAttribute(AttributeName.STEREOTYPE);
         String currentNodeStereotype = currentNode.getAttribute(AttributeName.STEREOTYPE);
@@ -190,13 +211,10 @@ public class AWSInfrastructureDeploymentDiagramLayoutAlgorithm implements Algori
         int column = 0;
 
         if (firstColumn(previousNode, currentNode)) {
-            //column = Integer.parseInt((String)previousNode.getAttribute(D_COL)) - 1;
             column = 1;
         } else if (sameColumn(previousNode, currentNode)) {
-            //column = Integer.parseInt((String)previousNode.getAttribute(D_COL));
             column = (Integer)previousNode.getAttribute(D_COL);
         } else if (nextColumn(previousNode, currentNode)) {
-            //column = Integer.parseInt((String)previousNode.getAttribute(D_COL)) + 1;
             column = (Integer)previousNode.getAttribute(D_COL) + 1;
         } else {
             // default if we don't know, so attempt to place it under the previous node

@@ -4,11 +4,7 @@ import com.eu.skyblue.iaasdocumenter.utils.Logger;
 import org.eclipse.uml2.uml.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 18/06/15
- * Time: 00:38
- * To change this template use File | Settings | File Templates.
+ * IaaSProfile UML profile. Defined for AWS IaaS components.
  */
 public class IaaSProfile {
     private static String NS_URI = "http://profile/iaas";
@@ -43,7 +39,11 @@ public class IaaSProfile {
     private org.eclipse.uml2.uml.Class artefactMetaclass;
     private org.eclipse.uml2.uml.Class associationMetaclass;
 
-
+    /**
+     * Constructs a new <code>IaaSProfile</code> object.
+     *
+     * @param logger         Logger
+     */
     public IaaSProfile(Logger logger) {
         this.logger = logger;
         this.umlProfileBuilder = new UMLProfileBuilder(NS_URI, PROFILE_NAME, logger);
@@ -207,6 +207,11 @@ public class IaaSProfile {
         umlProfileBuilder.createExtension(this.associationMetaclass, this.getOsiLayer2LinkStereotype(), Boolean.FALSE);
     }
 
+    /**
+     * Applies the IaaSProfile UML profile to the specified model.
+     *
+     * @param model The model that IaaSProfile should be applied to.
+     */
     public void applyProfile(org.eclipse.uml2.uml.Package model) {
         model.applyProfile(umlProfileBuilder.getProfile());
 
@@ -214,6 +219,12 @@ public class IaaSProfile {
                 model.getQualifiedName());
     }
 
+    /**
+     * Applies the specified stereotype to the specified element.
+     *
+     * @param namedElement    The element that a stereotype is to be applied to.
+     * @param stereotype      The stereotype to be applied.
+     */
     public void applyStereotype(NamedElement namedElement, Stereotype stereotype) {
         namedElement.applyStereotype(stereotype);
 
@@ -221,78 +232,137 @@ public class IaaSProfile {
                 namedElement.getQualifiedName());
     }
 
-    // need to update
-    public void setStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype,
-                                              Property property, Object value) {
-        Object valueToSet = value;
-
-        if ((value instanceof String) && (property.getType() instanceof Enumeration)) {
-            // Get the corresponding enumeration literal
-            valueToSet = ((Enumeration) property.getType()).getOwnedLiteral((String) value);
-        }
-
-        namedElement.setValue(stereotype, property.getName(), valueToSet);
-
-        logger.out("Value of stereotype property '%s' on element '%s' set to %s.", property.getQualifiedName(),
-                namedElement.getQualifiedName(), value);
-    }
-
+    /**
+     * Returns the Router stereotype.
+     *
+     * @return  Router stereotype
+     */
     public Stereotype getRouterStereotype() {
         return routerStereotype;
     }
 
+    /**
+     * Returns the AwsNode stereotype.
+     *
+     * @return  AwsNode stereotype
+     */
     public Stereotype getAwsNodeStereotype() {
         return awsNodeStereotype;
     }
 
+    /**
+     * Returns the Firewall stereotype.
+     *
+     * @return  Firewall stereotype
+     */
     public Stereotype getFirewallStereotype() {
         return firewallStereotype;
     }
 
+    /**
+     * Returns the ElasticLB stereotype.
+     *
+     * @return  ElasticLB stereotype
+     */
     public Stereotype getElasticLBStereotype() {
         return elasticLBStereotype;
     }
 
+    /**
+     * Returns the InternetGateway stereotype.
+     *
+     * @return  InternetGateway stereotype
+     */
     public Stereotype getInternetGatewayStereotype() {
         return internetGatewayStereotype;
     }
 
+    /**
+     * Returns the Ec2Instance stereotype.
+     *
+     * @return  Ec2Instance stereotype
+     */
     public Stereotype getEc2InstanceStereotype() {
         return ec2InstanceStereotype;
     }
 
+    /**
+     * Returns the SecurityGroup stereotype.
+     *
+     * @return  SecurityGroup stereotype
+     */
     public Stereotype getSecurityGroupStereotype() {
         return securityGroupStereotype;
     }
 
+    /**
+     * Returns the NetworkAcl stereotype.
+     *
+     * @return  NetworkAcl stereotype
+     */
     public Stereotype getNetworkAclStereotype() {
         return networkAclStereotype;
     }
 
+    /**
+     * Returns the VirtualPrivateCloud stereotype.
+     *
+     * @return  VirtualPrivateCloud stereotype
+     */
     public Stereotype getVirtualPrivateCloudStereotype() {
         return virtualPrivateCloudStereotype;
     }
 
+    /**
+     * Returns the Subnet stereotype.
+     *
+     * @return  Subnet stereotype
+     */
     public Stereotype getSubnetStereotype() {
         return subnetStereotype;
     }
 
+    /**
+     * Returns the RouteTable stereotype.
+     *
+     * @return  RouteTable stereotype
+     */
     public Stereotype getRouteTableStereotype() {
         return routeTableStereotype;
     }
 
+    /**
+     * Returns the NetworkInterface stereotype.
+     *
+     * @return  NetworkInterface stereotype
+     */
     public Stereotype getNetworkInterfaceStereotype() {
         return networkInterfaceStereotype;
     }
 
+    /**
+     * Returns the PacketFiltering stereotype.
+     *
+     * @return  PacketFiltering stereotype
+     */
     public Stereotype getPacketFilteringStereotype() {
         return packetFilteringStereotype;
     }
 
+    /**
+     * Returns the OsiLayer2Link stereotype.
+     *
+     * @return  OsiLayer2Link stereotype
+     */
     public Stereotype getOsiLayer2LinkStereotype() {
         return osiLayer2LinkStereotype;
     }
 
+    /**
+     * Returns the IaaSProfile UML Profile
+     *
+     * @return  IasSProfile UML Profile
+     */
     public Profile getProfile() {
         return umlProfileBuilder.getProfile();
     }

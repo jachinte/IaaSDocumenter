@@ -5,23 +5,55 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 19/06/15
- * Time: 00:02
- * To change this template use File | Settings | File Templates.
+ * Provides constant values representing labels for the stereotype
+ * properties defined as part of the IaaSProfile UML profile.
  */
 public class UMLStereotypeProperty {
+    /**
+     * CIDR value for VPC
+     */
     public static String VPC_CIDR = "vpcCidr";
+
+    /**
+     * Unique identifier
+     */
     public static String ID = "id";
+
+    /**
+     * Human friendly name
+     */
     public static String NAME = "name";
+
+    /**
+     * Host name registered in DNS
+     */
     public static String DNS_NAME = "dnsName";
+
+    /**
+     * Amazon Machine Image ID
+     */
     public static String AMI = "ami";
+
+    /**
+     * Indicates whether this is a default artefact (VPC, Subnet, Security Group, etc).
+     */
     public static String IS_DEFAULT = "isDefault";
+
+    /**
+     * CIDR value for subnet
+     */
     public static String CIDR_BLOCK = "cidrBlock";
+
+    /**
+     * Availability Zone Name
+     */
     public static String AVAILABILITY_ZONE = "availabilityZone";
 
+    /**
+     * A map of stereotype property names to types
+     */
     public static Map<String, String> ATTRIBUTE_TYPE_MAP;
+
     static {
         Map<String, String> tempMap =  new HashMap<String, String>();
         tempMap.put(VPC_CIDR, UMLPrimitiveType.STRING);

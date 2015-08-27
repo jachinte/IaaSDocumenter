@@ -7,6 +7,7 @@ import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotype;
 import com.eu.skyblue.iaasdocumenter.uml.UMLStereotypeProperty;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -14,12 +15,14 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+
 import org.eclipse.uml2.uml.*;
 import org.eclipse.uml2.uml.internal.resource.UMLResourceFactoryImpl;
 import org.eclipse.uml2.uml.resource.UML212UMLResource;
 import org.eclipse.uml2.uml.resource.XMI212UMLResource;
 import org.eclipse.uml2.uml.resource.XMI242UMLResource;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
+
 import org.graphstream.algorithm.Algorithm;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
@@ -29,13 +32,11 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 21/06/15
- * Time: 11:56
- * To change this template use File | Settings | File Templates.
+ * Renders the infrastructure graph in XMI format.
  */
 public class XMIRenderer implements Algorithm, GraphRenderer {
+    public static final String ROOT = "Root";
+
     private Graph vpcGraph;
     private IaaSProfile iaaSProfile;
     private Logger logger;
@@ -48,12 +49,19 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
     private URI uri;
     private Resource resource;
 
+
+    /**
+     * Constructs a new <code>XMIRenderer</code> object.
+     *
+     * @param iaaSProfile    IaaSProfile UML profile instance
+     * @param logger         Logger
+     */
     public XMIRenderer(IaaSProfile iaaSProfile, Logger logger) {
         this.iaaSProfile = iaaSProfile;
         this.logger = logger;
 
         this.model = UMLFactory.eINSTANCE.createModel();
-        model.setName("Root");
+        model.setName(ROOT);
         resourceSet = new ResourceSetImpl();
         resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(XMI212UMLResource.FILE_EXTENSION,
                 new UMLResourceFactoryImpl());
@@ -67,16 +75,45 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
         this.deploymentView = createNestedPackage("Deployment View");
     }
 
+
+    /**
+     * Sets the graph to be processed.
+     *
+     * @param graph    Graph representing AWS cloud configuration.
+     */
     @Override
     public void init(Graph graph) {
         this.vpcGraph = graph;
     }
 
+    /**
+     * Processes the infrastructure graph
+     */
     @Override
     public void compute() {
         processNodes();
 
         processEdges();
+    }
+
+    /**
+     * Write out the XMI representation of the graph.
+     *
+     * @param graph      Graph representing AWS cloud configuration.
+     * @param filePath   The filepath for the XMI file.
+     */
+    @Override
+    public void render(Graph graph, String filePath) {
+        this.init(graph);
+
+        // Required here instead of within the save method due to undocumented behaviour with Eclipse UML2
+        uri = URI.createFileURI(filePath).appendFileExtension(XMI212UMLResource.FILE_EXTENSION);
+        resource = resourceSet.createResource(uri);
+        resource.getContents().add(this.model);
+        resource.getContents().add(iaaSProfile.getProfile());
+
+        this.compute();
+        this.save();
     }
 
     private void processEdges() {
@@ -176,21 +213,18 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
         Iterator<Stereotype> stereotypeIterator = stereotypes.iterator();
         while (stereotypeIterator.hasNext()) {
             Stereotype stereotype = stereotypeIterator.next();
-            System.out.println("AP STEREOTYPE: " + stereotype.getName());
-
             EList<Property> properties = stereotype.getAllAttributes();
             List<String> stereotypeProperties = new ArrayList<String>();
             Iterator<Property> propertyIterator = properties.iterator();
+
             while(propertyIterator.hasNext()) {
                 Property property = propertyIterator.next();
                 stereotypeProperties.add(property.getName());
-                System.out.println(stereotype.getName() + " -> " + property.getName());
             }
 
             for (String attributeName: node.getEachAttributeKey()) {
                 String attributeType = UMLStereotypeProperty.ATTRIBUTE_TYPE_MAP.get(attributeName);
                 if (stereotypeProperties.contains(attributeName)) {
-                    System.out.println(" found: " + attributeName);
                     if (attributeType.equalsIgnoreCase(UMLPrimitiveType.STRING)) {
                         packageableElement.setValue(stereotype, attributeName, node.getAttribute(attributeName));
                     } else if (attributeType.equalsIgnoreCase(UMLPrimitiveType.BOOLEAN)) {
@@ -226,28 +260,12 @@ public class XMIRenderer implements Algorithm, GraphRenderer {
         return this.model.createNestedPackage(name);
     }
 
-    @Override
-    public void render(Graph graph, String filePath) {
-        this.init(graph);
-
-        // Required here instead of within the save method due to undocumented behaviour with Eclipse UML2
-        uri = URI.createFileURI(filePath).appendFileExtension(XMI212UMLResource.FILE_EXTENSION);
-        resource = resourceSet.createResource(uri);
-        resource.getContents().add(this.model);
-        resource.getContents().add(iaaSProfile.getProfile());
-
-        this.compute();
-        this.save();
-    }
-
-    //private void save(String filePath) {
     private void save() {
-
         try {
             ((XMIResourceImpl)resource).setXMIVersion(UML212UMLResource.VERSION_2_1_VALUE);
             resource.save(null);
         } catch (IOException e) {
-            System.err.println("Error saving XMI: " + e.getMessage());
+            logger.err("Error saving XMI: %s", e.getMessage());
         }
     }
 }

@@ -4,15 +4,17 @@ import com.eu.skyblue.iaasdocumenter.uml.IaaSProfile;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 26/07/15
- * Time: 02:35
- * To change this template use File | Settings | File Templates.
+ * Create renderers for the various file formats
  */
 public class RendererFactory {
     private RendererFactory() {}
 
+    /**
+     * Constructs a new <code>GraphRenderer</code> object.
+     *
+     * @param displayFormat  The file format required [XMI|PDF|SVG]
+     * @param logger         Logger
+     */
     public static GraphRenderer createRenderer(String displayFormat, Logger logger) throws Exception {
         if (displayFormat.equalsIgnoreCase(DisplayFormat.XMI)) {
             IaaSProfile iaaSProfile = new IaaSProfile(logger);

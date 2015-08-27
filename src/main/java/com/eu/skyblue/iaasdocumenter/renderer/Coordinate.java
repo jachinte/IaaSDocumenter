@@ -1,23 +1,29 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 03/07/15
- * Time: 01:15
- * To change this template use File | Settings | File Templates.
+ * Represents a coordinate for an artefact on a diagram.
+ * Based on http://stackoverflow.com/questions/13434681/how-to-search-an-array-of-coordinates-in-java
  */
-
-// Based on http://stackoverflow.com/questions/13434681/how-to-search-an-array-of-coordinates-in-java
 public class Coordinate {
     private int x;
     private int y;
 
+    /**
+     * Constructs a new <code>Coordinate</code> object.
+     *
+     * @param x   X-Coordinate
+     * @param y   Y-Coordinate
+     */
     public Coordinate(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * Indicate whether this object is equal to the specified object.
+     *
+     * @param o  The object to be compared.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -31,6 +37,9 @@ public class Coordinate {
         return true;
     }
 
+    /**
+     * Returns the hashcode for this object.
+     */
     @Override
     public int hashCode() {
         int result = x;
@@ -38,10 +47,16 @@ public class Coordinate {
         return result;
     }
 
+    /**
+     * Returns the X-Coordinate
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Returns the Y-Coordinate
+     */
     public int getY() {
         return y;
     }

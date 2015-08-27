@@ -1,15 +1,19 @@
 package com.eu.skyblue.iaasdocumenter.generator;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 21/06/15
- * Time: 13:27
- * To change this template use File | Settings | File Templates.
+ * Provides constant values representing various UML base classes.
  */
 public class MetaClass {
+
+    /** Note */
     public static final String NOTE = "Note";
+
+    /** Node class */
     public static final String NODE = "Node";
+
+    /** Artefact class */
     public static final String ARTEFACT = "Artefact";
+
+    /** Association class */
     public static final String ASSOCIATION = "Association";
 }

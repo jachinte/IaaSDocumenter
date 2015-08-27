@@ -1,7 +1,9 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
+
 import de.erichseifert.vectorgraphics2d.*;
+
 import org.graphstream.graph.Graph;
 
 import java.awt.*;
@@ -9,30 +11,42 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 04/07/15
- * Time: 21:19
- * To change this template use File | Settings | File Templates.
+ * Renders the infrastructure graph in SVG format.
  */
 public class SVGFormatRenderer extends AbstractGraphicalFormatRenderer implements GraphRenderer {
     private static final String SVG_FILE_EXTENSION = ".svg";
     private Logger logger;
 
+    /**
+     * Constructs a new <code>SVGFormatRenderer</code> object.
+     *
+     * @param logger         Logger
+     */
     public SVGFormatRenderer(Logger logger) {
         super(logger);
         this.logger = logger;
     }
 
+    /**
+     * Creates a new UML deployment diagram. Override in subclass.
+     *
+     * @return Deployment diagram.
+     */
     public UMLDeploymentDiagram createDiagram() {
-        getLayoutAlgorithm().getDiagramWidth();
         SVGGraphics2D document = new SVGGraphics2D(0.0, 0.0, getLayoutAlgorithm().getDiagramWidth(),
                 getLayoutAlgorithm().getDiagramHeght());
         document.setColor(Color.darkGray);
-        document.setStroke(new BasicStroke(0.2F));
+        document.setStroke(new BasicStroke(0.4F));
         return new UMLDeploymentDiagram(document);
     }
 
+    /**
+     * Write out the SVG representation of the graph.
+     *
+     * @param graph      Graph representing AWS cloud configuration.
+     * @param filePath   The filepath for the SVG file.
+     */
+    @Override
     public void render(Graph graph, String filePath) {
         super.render(graph, filePath);
         getLayoutAlgorithm().init(graph);
@@ -44,7 +58,7 @@ public class SVGFormatRenderer extends AbstractGraphicalFormatRenderer implement
         save(filePath, (SVGGraphics2D)umlDeploymentDiagram.getDocument());
     }
 
-    public void save(String filePath, SVGGraphics2D document) {
+    private void save(String filePath, SVGGraphics2D document) {
         filePath = filePath + SVG_FILE_EXTENSION;
         FileOutputStream file = null;
         try {

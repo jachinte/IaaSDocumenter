@@ -6,7 +6,6 @@ import com.eu.skyblue.iaasdocumenter.renderer.algo.AWSInfrastructureDeploymentDi
 import com.eu.skyblue.iaasdocumenter.uml.UMLPrimitiveType;
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
 
-import de.erichseifert.vectorgraphics2d.*;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -15,11 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 04/07/15
- * Time: 19:57
- * To change this template use File | Settings | File Templates.
+ * Graph renderer. Provides functionality inherited by concrete implementations
+ * of GraphRenderer.
  */
 public abstract class AbstractGraphicalFormatRenderer {
     private Logger logger;
@@ -27,6 +23,11 @@ public abstract class AbstractGraphicalFormatRenderer {
 
     private AWSInfrastructureDeploymentDiagramLayoutAlgorithm layoutAlgorithm;
 
+    /**
+     * Constructs a new <code>AbstractGraphicalFormatRenderer</code> object.
+     *
+     * @param logger         Logger
+     */
     public AbstractGraphicalFormatRenderer(Logger logger) {
         this.logger = logger;
         this.layoutAlgorithm = new AWSInfrastructureDeploymentDiagramLayoutAlgorithm(logger);
@@ -36,21 +37,31 @@ public abstract class AbstractGraphicalFormatRenderer {
         selectedAttributeNames.put(AttributeName.NAME, UMLPrimitiveType.STRING);
     }
 
-    // Override in sub class
-    public void save(String filePath, VectorGraphics2D document) {
-    }
+    /**
+     * Creates a new UML deployment diagram. Override in subclass.
+     *
+     * @return Deployment diagram.
+     */
+    public UMLDeploymentDiagram createDiagram() { return null; };
 
-    // Override in subclass
-    public UMLDeploymentDiagram createDiagram() {
-        return  null;
-    }
 
-    // Override in subclass
-    public void render(Graph graph, String filePath) {
-    }
+    /**
+     * Write out a representation of the graph. Override in subclass.
+     *
+     * @param graph      Graph representing AWS cloud configuration.
+     * @param filePath   Filepath for representation.
+     */
+    public void render(Graph graph, String filePath)  {};
 
+    /**
+     * Position the artefacts from the specified graph on the specified deployment diagram.
+     *
+     * @param vpcGraph               Graph representing AWS cloud configuration.
+     * @param umlDeploymentDiagram   Deployment diagrram.
+     */
     protected void placeArtefacts(Graph vpcGraph, UMLDeploymentDiagram umlDeploymentDiagram) {
-        // Place nodes on diagram
+
+        logger.out("Drawing nodes on diagram", "");
         for(Node node: vpcGraph.getEachNode() ) {
             if (node.getAttribute(UMLDeploymentDiagram.X_COORDINATE) == null) {
                 logger.out("Excluding graph node %s from diagram (not linked to anything)", node.getId());
@@ -80,15 +91,16 @@ public abstract class AbstractGraphicalFormatRenderer {
             }
         }
 
+        logger.out("Drawing associations on diagram", "");
         for (Edge edge: vpcGraph.getEachEdge()) {
-            logger.out("Node 0: %s, Node 1: %s", edge.getNode0().getId(), edge.getNode1().getId());
             Coordinate upperLineCoordinate = getLineUpperCoordinate(edge.getNode0(), edge.getNode1());
             Coordinate lowerLineCoordinate = getLineLowerCoordinate(edge.getNode0(), edge.getNode1());
             umlDeploymentDiagram.drawAssociation(upperLineCoordinate.getX(), upperLineCoordinate.getY(),
                     lowerLineCoordinate.getX(), lowerLineCoordinate.getY(),
                     (String)edge.getAttribute(AttributeName.STEREOTYPE));
 
-            logger.out("%s,%s - %s,%s", upperLineCoordinate.getX(), upperLineCoordinate.getY(),
+            logger.out("Draw assoc Node %s (%s,%s) - Node %s (%s,%s)", edge.getNode0().getId(),
+                    upperLineCoordinate.getX(),  upperLineCoordinate.getY(), edge.getNode1().getId(),
                     lowerLineCoordinate.getX(), lowerLineCoordinate.getY());
         }
     }
@@ -111,37 +123,26 @@ public abstract class AbstractGraphicalFormatRenderer {
         if (attributeValues.length() > 0) {
             attributeValues.append("}");
         }
-        //attributeValues.append("}");
         return attributeValues.toString();
     }
 
     private Node getUpperNode(Node node0, Node node1) {
         if ((Integer)node0.getAttribute(UMLDeploymentDiagram.Y_COORDINATE) <
                 (Integer)node1.getAttribute(UMLDeploymentDiagram.Y_COORDINATE)) {
-            logger.out("Upper node: %s, (%s,%s)", node0.getId(),
-                    (Integer)node0.getAttribute(UMLDeploymentDiagram.Y_COORDINATE),
-                    (Integer)node0.getAttribute(UMLDeploymentDiagram.X_COORDINATE));
+
             return node0;
         }
 
-        logger.out("Upper node: %s, (%s,%s)", node1.getId(),
-                (Integer)node1.getAttribute(UMLDeploymentDiagram.Y_COORDINATE),
-                (Integer)node1.getAttribute(UMLDeploymentDiagram.X_COORDINATE));
         return node1;
     }
 
     private Node getLowerNode(Node node0, Node node1) {
         if ((Integer)node0.getAttribute(UMLDeploymentDiagram.Y_COORDINATE) >
                 (Integer)node1.getAttribute(UMLDeploymentDiagram.Y_COORDINATE)) {
-            logger.out("Lower node: %s, (%s,%s)", node0.getId(),
-                    (Integer)node0.getAttribute(UMLDeploymentDiagram.Y_COORDINATE),
-                    (Integer)node0.getAttribute(UMLDeploymentDiagram.X_COORDINATE));
+
             return node0;
         }
 
-        logger.out("Lower node: %s, (%s,%s)", node1.getId(),
-                (Integer)node1.getAttribute(UMLDeploymentDiagram.Y_COORDINATE),
-                (Integer)node1.getAttribute(UMLDeploymentDiagram.X_COORDINATE));
         return node1;
     }
 
@@ -169,6 +170,11 @@ public abstract class AbstractGraphicalFormatRenderer {
         return new Coordinate(xCoordinate, yCoordinate);
     }
 
+    /**
+     * Returns the layout algorithm.
+     *
+     * @return Layout algorithm
+     */
     public AWSInfrastructureDeploymentDiagramLayoutAlgorithm getLayoutAlgorithm() {
         return layoutAlgorithm;
     }

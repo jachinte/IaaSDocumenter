@@ -1,16 +1,22 @@
 package com.eu.skyblue.iaasdocumenter.renderer;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 26/07/15
- * Time: 02:39
- * To change this template use File | Settings | File Templates.
+ * Provides constant values representing various file formats.
  */
 public class DisplayFormat {
+
+    /** XMI format */
     public static String XMI = "xmi";
+
+    /** PDF format */
     public static String PDF = "pdf";
+
+    /** SVG format */
     public static String SVG = "svg";
+
+    /** EPS format */
     public static String EPS = "eps";
+
+    /** RWG (GraphStream display) format */
     public static String RWG = "raw_graph";
 }

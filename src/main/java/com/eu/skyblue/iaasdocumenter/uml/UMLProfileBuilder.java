@@ -1,6 +1,7 @@
 package com.eu.skyblue.iaasdocumenter.uml;
 
 import com.eu.skyblue.iaasdocumenter.utils.Logger;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
@@ -9,28 +10,30 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
+
 import org.eclipse.uml2.uml.*;
 import org.eclipse.uml2.uml.internal.resource.UMLResourceFactoryImpl;
 import org.eclipse.uml2.uml.resource.*;
 import org.eclipse.uml2.uml.resources.util.UMLResourcesUtil;
 
-import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 13/06/15
- * Time: 23:35
- * To change this template use File | Settings | File Templates.
+ * Provides the functionality for programmatically creating an
+ * instance of a UML profile
  */
 public class UMLProfileBuilder {
     private com.eu.skyblue.iaasdocumenter.utils.Logger logger;
     private ResourceSet resourceSet;
     private Profile profile;
 
-
+    /**
+     * Constructs a new <code>UMLProfileBuilder</code> object.
+     *
+     * @param nsUri          URI String for the profile to be created
+     * @param profileName    Name of the profile to be created
+     * @param logger         Logger
+     */
     protected UMLProfileBuilder(String nsUri, String profileName, Logger logger) {
         // Create a resource-set to contain the resource(s) that we load and save
         resourceSet = new ResourceSetImpl();
@@ -50,11 +53,22 @@ public class UMLProfileBuilder {
         this.logger = logger;
     }
 
+    /**
+     * Returns an instance of the UML profile
+     * @return UML profile
+     */
     protected Profile getProfile() {
         return this.profile;
     }
 
-    // Import primitive types
+    /**
+     * Imports the specified primitive type
+     *
+     * @param name  The type to import.
+     *
+     * @return      The imported type.
+     *
+     */
     protected PrimitiveType importPrimitiveType(String name) {
         org.eclipse.uml2.uml.Package umlLibrary =
             (org.eclipse.uml2.uml.Package)load(URI.createURI(XMI2UMLResource.UML_PRIMITIVE_TYPES_LIBRARY_2_4_1_URI));
@@ -66,6 +80,13 @@ public class UMLProfileBuilder {
         return PrimitiveType;
     }
 
+    /**
+     * References the specified metaclass
+     *
+     * @param name  The metaclass to reference
+     *
+     * @return      The referenced metaclass
+     */
     protected org.eclipse.uml2.uml.Class referenceMetaclass(String name) {
         org.eclipse.uml2.uml.Package _package = load(URI.createURI(UMLResource.UML_METAMODEL_URI));
         Model umlMetamodel = (Model) _package;
@@ -78,7 +99,13 @@ public class UMLProfileBuilder {
         return metaclass;
     }
 
-    // Create stereotype
+    /**
+     * Creates a new stereotype
+     *
+     * @param name  The name of the stereotype to create
+     *
+     * @return      The new stereotype
+     */
     protected Stereotype createStereotype(String name, boolean isAbstract) {
         Stereotype stereotype = this.profile.createOwnedStereotype(name, isAbstract);
 
@@ -88,16 +115,34 @@ public class UMLProfileBuilder {
     }
 
 
-    // Create stereotype generalization
+    /**
+     * Creates a new stereotype generalization
+     *
+     * @param specificClassifier  The specific classifier
+     * @param generalClassifier   The general classifier
+     *
+     * @return                    The new stereotype generalization
+     */
     protected Generalization createGeneralization(Classifier specificClassifier, Classifier generalClassifier) {
         Generalization generalization = specificClassifier.createGeneralization(generalClassifier);
 
-        logger.out("Generalization %s --|> %s created.", specificClassifier.getQualifiedName(), generalClassifier.getQualifiedName());
+        logger.out("Generalization %s -> %s created.", specificClassifier.getQualifiedName(), generalClassifier.getQualifiedName());
 
         return generalization;
     }
 
-    // Stereotype property (create)
+    /**
+     * Creates a new attribute
+     *
+     * @param class_         The class in which the attribute is to be created
+     * @param name           The name of the attribute
+     * @param type           The type of attribute
+     * @param lowerBound     Lower bound for attribute
+     * @param upperBound     Upper bound for attribute
+     * @param defaultValue   Default value for attribute
+     *
+     * @return               The new attribute
+     */
     protected Property createAttribute(org.eclipse.uml2.uml.Class class_, String name, Type type,
                                        int lowerBound, int upperBound, Object defaultValue) {
         Property attribute = class_.createOwnedAttribute(name, type, lowerBound, upperBound);
@@ -132,7 +177,15 @@ public class UMLProfileBuilder {
         return attribute;
     }
 
-    // Create extension
+    /**
+     * Creates a new extension
+     *
+     * @param metaclass      The base class
+     * @param stereotype     The stereotype
+     * @param required       Whether mandatory or not
+     *
+     * @return               The new extension
+     */
     protected Extension createExtension(org.eclipse.uml2.uml.Class metaclass, Stereotype stereotype,
                                         boolean required) {
         Extension extension = stereotype.createExtension(metaclass, required);
@@ -146,47 +199,22 @@ public class UMLProfileBuilder {
         return extension;
     }
 
-    // Define profile
+    /**
+     * Defines the profile
+     */
     protected void defineProfile() {
         this.profile.define();
 
         logger.out("Profile '%s' defined.", profile.getQualifiedName());
     }
 
-    // Create enumeration
-    protected Enumeration createEnumeration(org.eclipse.uml2.uml.Package package_, String name) {
-        Enumeration enumeration = package_.createOwnedEnumeration(name);
-
-        logger.out("Enumeration '%s' created.", enumeration.getQualifiedName());
-
-        return enumeration;
-    }
-
-    // Create enumeration literal
-    protected EnumerationLiteral createEnumerationLiteral(Enumeration enumeration, String name) {
-        EnumerationLiteral enumerationLiteral = enumeration.createOwnedLiteral(name);
-
-        logger.out("Enumeration literal '%s' created.", enumerationLiteral.getQualifiedName());
-
-        return enumerationLiteral;
-    }
-
-    protected void save(org.eclipse.uml2.uml.Package package_, URI uri) {
-        // Create the resource to be saved and add the package to it
-        Resource resource = resourceSet.createResource(uri);
-        resource.getContents().add(package_);
-
-        // And save.
-        try {
-            ((XMIResourceImpl)resource).setXMIVersion(UML212UMLResource.VERSION_2_1_VALUE);
-            resource.save(null);
-            logger.out("Done.");
-        } catch (IOException ioe) {
-            logger.err(ioe.getMessage());
-        }
-    }
-
-    // Load
+    /**
+     * Loads a package from a resource with the specified URI.
+     *
+     * @param uri      Resource URI
+     *
+     * @return         The loaded package.
+     */
     protected org.eclipse.uml2.uml.Package load(URI uri) {
         org.eclipse.uml2.uml.Package package_ = null;
 
@@ -204,44 +232,5 @@ public class UMLProfileBuilder {
         }
 
         return package_;
-    }
-
-    // Apply profile
-    protected void applyProfile(org.eclipse.uml2.uml.Package package_) {
-        package_.applyProfile(this.profile);
-
-        logger.out("Profile '%s' applied to package '%s'.", profile.getQualifiedName(), package_.getQualifiedName());
-    }
-
-    // Apply stereotype
-    protected void applyStereotype(NamedElement namedElement, Stereotype stereotype) {
-        namedElement.applyStereotype(stereotype);
-
-        logger.out("Stereotype '%s' applied to element '%s'.", stereotype.getQualifiedName(),
-                namedElement.getQualifiedName());
-    }
-
-    // Acess stereotype property values
-    protected Object getStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype, Property property) {
-        Object value = namedElement.getValue(stereotype, property.getName());
-
-        logger.out("Value of stereotype property '%s' on element '%s' is %s.", property.getQualifiedName(),
-                namedElement.getQualifiedName(), value);
-
-        return value;
-    }
-    protected void setStereotypePropertyValue(NamedElement namedElement, Stereotype stereotype,
-                                              Property property, Object value) {
-        Object valueToSet = value;
-
-        if ((value instanceof String) && (property.getType() instanceof Enumeration)) {
-            // Get the corresponding enumeration literal
-            valueToSet = ((Enumeration) property.getType()).getOwnedLiteral((String) value);
-        }
-
-        namedElement.setValue(stereotype, property.getName(), valueToSet);
-
-        logger.out("Value of stereotype property '%s' on element '%s' set to %s.", property.getQualifiedName(),
-                namedElement.getQualifiedName(), value);
     }
 }

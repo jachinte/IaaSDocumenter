@@ -3,12 +3,15 @@ package com.eu.skyblue.iaasdocumenter.renderer;
 import org.graphstream.graph.Graph;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 13/06/15
- * Time: 23:08
- * To change this template use File | Settings | File Templates.
+ * Specifies the operations a graph renderer should implement
  */
 public interface GraphRenderer {
+
+    /**
+     * Write out the graph representation to a file
+     *
+     * @param graph      Graph representing AWS cloud configuration.
+     * @param filePath   The filepath for the output.
+     */
     public void render(Graph graph, String filePath);
 }

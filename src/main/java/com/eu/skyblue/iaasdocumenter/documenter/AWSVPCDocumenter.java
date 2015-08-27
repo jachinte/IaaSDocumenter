@@ -12,22 +12,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 13/06/15
- * Time: 09:17
- * To change this template use File | Settings | File Templates.
+ * Creates a graph of the provisioned VPCs.
  */
 public class AWSVPCDocumenter implements IaasDocumenter {
     private AWSInfrastructureClient awsInfrastructureClient;
     private List<Graph> graphList;
 
+    /**
+     * Constructs a new <code>AWSVPCDocumenter</code> object.
+     *
+     * @param awsInfrastructureClient  AWS client
+     */
     protected AWSVPCDocumenter(AWSInfrastructureClient awsInfrastructureClient) throws Exception {
         this.awsInfrastructureClient = awsInfrastructureClient;
         this.graphList = new ArrayList<Graph>();
     }
 
-    // Get list of VPCs and create graphs for them
+    /**
+     * Creates an inventory of the provisioned artefacts for each VPC
+     */
     public void createInventory() throws AmazonServiceException {
         for (Vpc vpc: awsInfrastructureClient.getVpcs()) {
             Graph vpcGraph = new MultiGraph(vpc.getVpcId());
@@ -44,6 +47,11 @@ public class AWSVPCDocumenter implements IaasDocumenter {
         }
     }
 
+    /**
+     * Returns the list of graphs for provisioned VPCs.
+     *
+     * @return list of VPC graphs
+     */
     public List<Graph> getGraphs() {
         return this.graphList;
     }

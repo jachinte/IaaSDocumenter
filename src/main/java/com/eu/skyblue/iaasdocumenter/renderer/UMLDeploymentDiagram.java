@@ -7,11 +7,7 @@ import java.util.List;
 import java.awt.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 30/06/15
- * Time: 00:35
- * To change this template use File | Settings | File Templates.
+ * An instance of a graphical representation of a UML diagram.
  */
 public class UMLDeploymentDiagram {
     public static final int ARTEFACT_HEIGHT_PIXELS = 25; // 30
@@ -40,6 +36,11 @@ public class UMLDeploymentDiagram {
     FontMetrics fontMetrics;
     private Graphics2D document;
 
+    /**
+     * Constructs a new <code>UMLDeploymentDiagram</code> object.
+     *
+     * @param document  Java Graphics 2D object on which the artefacts will be drawn.
+     */
     protected UMLDeploymentDiagram(Graphics2D document) {
         this.document = document;
         this.font = new Font("serif", Font.PLAIN, FONT_SIZE);
@@ -50,7 +51,20 @@ public class UMLDeploymentDiagram {
     private String addGuillemets(String string) {
         return "«" + string + "»";
     }
-    protected void drawNode(int x, int y, int width, int height, String stereotype, String elementId, String attributes) {
+
+    /**
+     * Draws a graphical representation of a Node artefact.
+     *
+     * @param x           X-Coordinate for artefact
+     * @param y           Y-Coordinate for artefact
+     * @param width       Width of artefact
+     * @param height      Height for artefact
+     * @param stereotype  Stereotype for node
+     * @param elementId   Unique ID (from AWS) for node
+     * @param attributes  Selected attributes to be rendered on graphical representation.
+     */
+    protected void drawNode(int x, int y, int width, int height, String stereotype, String elementId,
+                            String attributes) {
         this.document.drawRect(x, y, width, height);
 
         this.document.drawLine(x, y, x + X_NODE_OFFSET, y - Y_NODE_OFFSET);
@@ -63,6 +77,16 @@ public class UMLDeploymentDiagram {
         renderNodeText(x, y, width, addGuillemets(stereotype), elementId, attributes);
     }
 
+    /**
+     * Draws text on a Node artefact.
+     *
+     * @param x           X-Coordinate for text
+     * @param y           Y-Coordinate for text
+     * @param width       Width of text
+     * @param stereotype  Stereotype for node
+     * @param elementId   Unique ID (from AWS) for node
+     * @param attributes  Selected attributes to be rendered on graphical representation.
+     */
     protected void renderNodeText(int x, int y, int width, String stereotype, String elementId, String attributes) {
         List<String> nodeAttributes = Arrays.asList(stereotype, elementId, attributes);
         int stringOffsetY = y;
@@ -74,82 +98,41 @@ public class UMLDeploymentDiagram {
         }
     }
 
+    /**
+     * Draws an association
+     *
+     * @param x1           X-Coordinate for association (point 1)
+     * @param y1           Y-Coordinate for association (point 1)
+     * @param x2           X-Coordinate for association (point 2)
+     * @param y2           Y-Coordinate for association (point 2)
+     * @param stereotype   Stereotype for node
+     */
     protected void drawAssociation(int x1, int y1, int x2, int y2, String stereotype) {
         Stroke originalStroke = document.getStroke();
         if (stereotype.equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
-            Stroke dashed = new BasicStroke(0.1f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0.f, new float[]{2.5f, 1.5f}, 0);
+            Stroke dashed = new BasicStroke(0.4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+                    0.f, new float[]{2.5f, 1.5f}, 0);
             document.setStroke(dashed);
         }
         document.drawLine(x1, y1, x2, y2);
         document.setStroke(originalStroke);
         if (stereotype.equalsIgnoreCase(UMLStereotype.DEPLOYMENT)) {
-            this.drawArrowhead3(x1, y1, x2, y2);
+            // Need to draw arrowhead here.
         }
         renderAssociationStereotypeText(x1, y1, x2, y2, addGuillemets(stereotype));
     }
 
-//    private void drawArrowhead2(int x1, int y1, int x2, int y2) {
-//        int dx = x1 - x2;
-//        int dy = y1 - y2;
-//
-//        double dist = Math.sqrt(dx * dx + dy * dy);
-//        int offset = 8;
-//
-//        double nX = dx / dist;
-//        double nY = dy / dist;
-//
-//        double xP = offset * nX;
-//        double yP = offset * nY;
-//
-//        int d2x = dx + (int)yP;
-//        int d2y = dy - (int)xP;
-//
-//        int d3x = dx - (int)yP;
-//        int d3y = dy + (int)xP;
-//
-//        this.document.drawLine(x2,y2, d3x,d3y);
-//
-//    }
-
-    // http://stackoverflow.com/questions/1800138/given-a-start-and-end-point-and-a-distance-calculate-a-point-along-a-line
-    private void drawArrowhead2(int x1, int y1, int x2, int y2) {
-        double vx = x2 - x1;
-        double vy = y2 - y1;
-
-        double distance = 10;
-
-        double len = Math.sqrt(vx * vx + vy * vy);
-
-        vx = vx / len;
-        vy = vy / len;
-
-        int px = (int) Math.abs(((double) x2 + vx * (len + (double)distance)));
-        int py = (int) Math.abs(((double) y2 + vy * (len + (double)distance)));
-        System.out.println("********** X = " + px + ", Y=" + py);
-        System.out.println("********** X1 = " + x1 + ", Y1=" + y1);
-        System.out.println("********** X2 = " + x2 + ", Y2=" + y2);
-        //this.document.drawLine(px,py, 0,0);
-    }
-
-    private void drawArrowhead3(int x1, int y1, int x2, int y2) {
-        double vx = x2 - x1;
-        double vy = y2 - y1;
-
-        double distance = 10;
-
-        double len = Math.sqrt(vx * vx + vy * vy);
-
-        vx = vx / len;
-        vy = vy / len;
-
-        int px = (int) Math.abs(((double) x2 + vx * (len + (double)distance)));
-        int py = (int) Math.abs(((double) y2 + vy * (len + (double)distance)));
-        System.out.println("********** X = " + px + ", Y=" + py);
-        System.out.println("********** X1 = " + x1 + ", Y1=" + y1);
-        System.out.println("********** X2 = " + x2 + ", Y2=" + y2);
-        //this.document.drawLine(px,py, 0,0);
-    }
-
+    /**
+     * Draws a graphical representation of an artefact.
+     *
+     * @param x           X-Coordinate for artefact
+     * @param y           Y-Coordinate for artefact
+     * @param width       Width of artefact
+     * @param height      Height for artefact
+     * @param stereotype  Stereotype for node
+     * @param elementId   Unique ID (from AWS) for node
+     * @param attributes  Selected attributes to be rendered on graphical representation.
+     */
     protected void drawArtefact(int x, int y, int width, int height, String stereotype, String elementId,
                              String attributes) {
         this.document.drawRect(x, y, width, height);
@@ -202,6 +185,10 @@ public class UMLDeploymentDiagram {
         return Math.max(p1, p2) - ((Math.max(p1,p2) - Math.min(p1,p2))/2);
     }
 
+    /**
+     * Return the Graphics2D object
+     * @return Graphics2D object
+     */
     public Graphics2D getDocument() {
         return document;
     }

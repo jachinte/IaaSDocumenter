@@ -11,16 +11,17 @@ import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancing;
 import com.amazonaws.services.elasticloadbalancing.AmazonElasticLoadBalancingClient;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 13/06/15
- * Time: 09:20
- * To change this template use File | Settings | File Templates.
+ * Creates <code>IaasDocumenter</code> objects.
  */
 public class DocumenterFactory {
 
     private DocumenterFactory () {}
 
+    /**
+     * Constructs a new <code>IaasDocumenter</code> object.
+     *
+     * @param region  The AWS region in which VPCs are to be documented
+     */
     public static IaasDocumenter createIaasDocumenter(Regions region) throws Exception {
         AWSCredentials awsCredentials = null;
         try {

@@ -9,11 +9,7 @@ import com.amazonaws.services.elasticloadbalancing.model.LoadBalancerDescription
 import java.util.List;
 
 /**
- * Created with IntelliJ IDEA.
- * User: raye
- * Date: 13/06/15
- * Time: 09:13
- * To change this template use File | Settings | File Templates.
+ * Provides functionality for querying AWS.
  */
 public class AWSInfrastructureClient {
     public static final String VPC_ID = "vpc-id";
@@ -21,15 +17,33 @@ public class AWSInfrastructureClient {
     private AmazonEC2 ec2;
     private AmazonElasticLoadBalancing elb;
 
+    /**
+     * Constructs a new <code>AWSInfrastructureClient</code> object.
+     *
+     * @param ec2  EC2 querying client
+     * @param elb  Elastic Load Balancing querying client
+     */
     protected AWSInfrastructureClient(AmazonEC2 ec2, AmazonElasticLoadBalancing elb) throws  Exception {
         this.ec2 = ec2;
         this.elb = elb;
     }
 
+    /**
+     * Returns the list of provisioned VPCs
+     *
+     * @return List of provisioned VPCs
+     */
     public List<Vpc> getVpcs() {
         return ec2.describeVpcs().getVpcs();
     }
 
+    /**
+     * Returns the list of provisioned Internet Gateways for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Internet Gateways
+     */
     public List<InternetGateway> getInternetGateways(Vpc vpc) {
         Filter filter = new Filter(IGW_ATTACHMENT_VPC_ID).withValues(vpc.getVpcId());
         DescribeInternetGatewaysResult describeInternetGatewaysResult =
@@ -37,6 +51,13 @@ public class AWSInfrastructureClient {
         return describeInternetGatewaysResult.getInternetGateways();
     }
 
+    /**
+     * Returns the list of provisioned Route Tables for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Route Tables
+     */
     public List<RouteTable> getRouteTables(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeRouteTablesResult describeRouteTablesResult =
@@ -44,6 +65,13 @@ public class AWSInfrastructureClient {
         return describeRouteTablesResult.getRouteTables();
     }
 
+    /**
+     * Returns the list of provisioned Network ACLs for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Network ACLs
+     */
     public List<NetworkAcl> getNetworkAcls(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeNetworkAclsResult describeNetworkAclsResult =
@@ -51,6 +79,13 @@ public class AWSInfrastructureClient {
         return describeNetworkAclsResult.getNetworkAcls();
     }
 
+    /**
+     * Returns the list of provisioned Subnets for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Subnets
+     */
     public List<Subnet> getSubnets(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeSubnetsResult describeSubnetsResult =
@@ -58,6 +93,13 @@ public class AWSInfrastructureClient {
         return describeSubnetsResult.getSubnets();
     }
 
+    /**
+     * Returns the list of provisioned Security Groups for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Security Groups
+     */
     public List<SecurityGroup> getSecurityGroups(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeSecurityGroupsResult describeSecurityGroupsResult =
@@ -65,6 +107,13 @@ public class AWSInfrastructureClient {
         return describeSecurityGroupsResult.getSecurityGroups();
     }
 
+    /**
+     * Returns the list of provisioned Network Interfaces for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Network Interfaces
+     */
     public List<NetworkInterface> getNeworkInterfaces(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeNetworkInterfacesResult describeNetworkInterfacesResult =
@@ -72,6 +121,13 @@ public class AWSInfrastructureClient {
         return describeNetworkInterfacesResult.getNetworkInterfaces();
     }
 
+    /**
+     * Returns the list of provisioned EC2 Instances for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned EC2 Instances
+     */
     public List<Reservation> getInstances(Vpc vpc) {
         Filter filter = new Filter(VPC_ID).withValues(vpc.getVpcId());
         DescribeInstancesResult describeInstancesResult =
@@ -79,6 +135,13 @@ public class AWSInfrastructureClient {
         return describeInstancesResult.getReservations();
     }
 
+    /**
+     * Returns the list of provisioned Elastic Load Balancers for the specified VPC
+     *
+     * @param vpc VPC to query
+     *
+     * @return List of provisioned Elastic Load Balancers
+     */
     public List<LoadBalancerDescription> getElasticLoadBalancers(Vpc vpc) {
         DescribeLoadBalancersResult describeLoadBalancersResult =
                 elb.describeLoadBalancers();
