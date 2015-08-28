@@ -11,4 +11,8 @@ VectorGraphics2D - https://github.com/eseifert/vectorgraphics2d
 Eclipse UML 2 - http://wiki.eclipse.org/MDT-UML2
 Apache Commons CLI - https://commons.apache.org/proper/commons-cli/
 
+Build
+-----
+A POM file is included with the source code. If there are problems with the eclipse dependencies, they will have to be downloaded manually, and the files in the scripts folder may be of help.
+
 
