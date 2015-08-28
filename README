@@ -1,8 +1,7 @@
 IaaSDocumenter
 ==============
 
-IaaSDocumenter is a command line utility that can interrogate AWS and create UML deployment diagrams
-of the provisioned IaaS artefacts (VPCs, EC2 Instances, Load Balancers, Security Groups, etc).
+IaaSDocumenter is a command line utility that can interrogate AWS and create UML deployment diagrams of the provisioned IaaS artefacts (VPCs, EC2 Instances, Load Balancers, Security Groups, etc).
 
 Dependencies
 ------------
