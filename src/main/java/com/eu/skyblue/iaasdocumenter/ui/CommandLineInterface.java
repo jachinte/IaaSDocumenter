@@ -52,7 +52,7 @@ public class CommandLineInterface {
                 .longOpt(DISPLAY_FORMAT)
                 .required(false)
                 .hasArg()
-                .desc("Display format [XMI|SVG|PDF|EPS|RAW_GRAPH]")
+                .desc("Display format [XMI|SVG|PDF]")
                 .build());
 
         options.addOption(Option.builder("r")
