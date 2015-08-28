@@ -30,6 +30,11 @@ Create UML deployment diagrams for specified AWS region
  -r,--aws-region <arg>       AWS region (use -l or --list-regions to get
                              valid values for this option)
 
+Example
+-------
+The following will create diagrams in PDF format in the ~/diagrams/ folder:
+java -jar ./IaaSDocumenter-1.0-SNAPSHOT.jar -f PDF -o ~/diagrams/ -r us-west-2
+
 Notes
 -----
 Before using IaaSDocumenter, you'll need to configure your default AWS credentials in the  ~/.aws/credentials file as described at http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
