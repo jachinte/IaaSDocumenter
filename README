@@ -13,7 +13,7 @@ Apache Commons CLI - https://commons.apache.org/proper/commons-cli/
 
 Build
 -----
-A POM file is included with the source code. If there are problems with the eclipse dependencies, they will have to be downloaded manually, and the files in the scripts folder may be of help.
+A POM file is included with the source code. If there are problems with the eclipse dependencies, they will have to be downloaded manually, and the files in the scripts folder may be of help. A pre-compiled JAR can be found in the bin folder.
 
 Usage
 -----
@@ -33,3 +33,4 @@ Create UML deployment diagrams for specified AWS region
 Notes
 -----
 Before using IaaSDocumenter, you'll need to configure your default AWS credentials in the  ~/.aws/credentials file as described at http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
+
