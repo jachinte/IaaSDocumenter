@@ -15,4 +15,21 @@ Build
 -----
 A POM file is included with the source code. If there are problems with the eclipse dependencies, they will have to be downloaded manually, and the files in the scripts folder may be of help.
 
+Usage
+-----
+java -jar ./IaaSDocumenter-1.0-SNAPSHOT.jar -h
+*** IaaSDocumenter! ***
+usage: IaaSDocumenter.jar [-d] [-f <arg>] [-h] [-l] [-o <arg>] [-r <arg>]
+Create UML deployment diagrams for specified AWS region
 
+ -d,--debug                  Display debug information
+ -f,--display-format <arg>   Display format [XMI|SVG|PDF]
+ -h,--help                   Show help
+ -l,--list-regions           List AWS regions
+ -o,--output-folder <arg>    Output folder
+ -r,--aws-region <arg>       AWS region (use -l or --list-regions to get
+                             valid values for this option)
+
+Notes
+-----
+Before using IaaSDocumenter, you'll need to configure your default AWS credentials in the  ~/.aws/credentials file as described at http://docs.aws.amazon.com/AWSSdkDocsJava/latest/DeveloperGuide/credentials.html
