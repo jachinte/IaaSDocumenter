@@ -1,0 +1,15 @@
+IaaSDocumenter
+==============
+
+IaaSDocumenter is a command line utility that can interrogate AWS and create UML deployment diagrams
+of the provisioned IaaS artefacts (VPCs, EC2 Instances, Load Balancers, Security Groups, etc).
+
+Dependencies
+------------
+AWS SDK for JAVA - https://aws.amazon.com/sdk-for-java/
+GraphStream Library - http://graphstream-project.org/
+VectorGraphics2D - https://github.com/eseifert/vectorgraphics2d
+Eclipse UML 2 - http://wiki.eclipse.org/MDT-UML2
+Apache Commons CLI - https://commons.apache.org/proper/commons-cli/
+
+
